@@ -92,12 +92,14 @@
 }
 html, body { min-height: 100%; background: var(--night); color: var(--ivory); }
 body { isolation: isolate; }
+body.is-entry-open { overflow: hidden; }
+body.is-entry-open > *:not(#observatoryBackdrop):not(#entryOverlay):not(#bgMusic):not(script) { visibility: hidden; }
 #observatoryBackdrop { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; z-index: 0; pointer-events: none; user-select: none; }
 #webglCanvas { z-index: 1; }
 .glass-pill { background: rgba(5, 8, 13, 0.8); border-color: var(--line); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22); }
 .glass-panel { background: var(--panel); border: 1px solid rgba(210, 184, 151, 0.18); box-shadow: 0 22px 60px rgba(0, 0, 0, 0.34); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 .text-rose-gradient { background: none; color: var(--ivory); -webkit-text-fill-color: var(--ivory); -webkit-background-clip: initial; }
-.entry-overlay { position: fixed; inset: 0; z-index: 50; overflow: hidden; color: var(--ivory); opacity: 1; transition: opacity 720ms ease, visibility 720ms ease; }
+.entry-overlay { position: fixed; inset: 0; z-index: 50; overflow: hidden; color: var(--ivory); background: linear-gradient(90deg, rgba(3, 6, 12, .76) 0%, rgba(3, 6, 12, .56) 39%, rgba(3, 6, 12, .12) 100%), linear-gradient(0deg, rgba(3, 6, 12, .62), transparent 55%); opacity: 1; transition: opacity 720ms ease, visibility 720ms ease; }
 .entry-overlay[hidden] { display: none; }
 .entry-overlay.is-open ~ header { opacity: 0; pointer-events: none; }
 .entry-overlay.is-closing { opacity: 0; visibility: hidden; pointer-events: none; }
@@ -125,6 +127,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid #e2c299; outline-offs
 #photoModal[aria-hidden="true"] { visibility: hidden; }
 #modalPhotoImg { display: block; max-width: 100%; max-height: 100%; object-fit: contain; }
 @media (max-width:760px) {
+  .entry-overlay { background: linear-gradient(0deg, rgba(3, 6, 12, .96) 0%, rgba(3, 6, 12, .82) 45%, rgba(3, 6, 12, .14) 100%); }
   #observatoryBackdrop { object-position: 61% center; }
   .entry-brand { left: 24px; top: 22px; }
   .entry-index { right: 24px; top: 32px; font-size: 8px; letter-spacing: .16em; }

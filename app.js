@@ -113,6 +113,7 @@
 
       document.getElementById('enterExperienceBtn').addEventListener('click', () => {
         const overlay = entryOverlay;
+        document.body.classList.remove('is-entry-open');
         overlay.classList.remove('is-open');
         overlay.classList.add('is-closing');
         document.querySelector('header a[href="#chapter-overture"]')?.focus({ preventScroll: true });
