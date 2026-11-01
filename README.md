@@ -1,30 +1,22 @@
-# AKKÚ · The Private 3D Gallery
+# AKKÚ · A 3D Scroll Story
 
-A personal memory museum built around a warm, marble rotunda. The gallery combines a real-time Three.js scene with a set of interactive rooms and the original photos, films, letter, and soundtrack.
+A small universe, made for one person. A scroll-driven 3D story built with Three.js:
 
-## Rooms and features
+- **26 photographs** (`assets/p01.jpg` – `p26.jpg`) floating as glass frames; tap any to view up close
+- **8 short films** in a private screening room (`v02`, `v03`, `clip02`, `clip03`, `clip04`, `clip06`, `clip07`, `clip08`)
+- **"Jaavedaan Hai"** as the background soundtrack (`assets/audio_3.mp3`), auto-pausing while a clip plays
+- **A letter** with four "open when…" envelopes
+- **A live counter** that counts up from **24 June 2026**
 
-- Seven rooms: Home, Memories, Cinema, Letter, Museum, Sparks, and Forever
-- Twenty-six walnut-and-brass framed photos arranged around the rotunda
-- Four gallery layouts, drag-to-look controls, scroll-to-walk zoom, and an optional guided tour
-- A film room with eight clips, plus a soundtrack control
-- A wax-sealed letter, five open-when notes, curator plaques, and memory games
-- Optional photo, video, and music uploads that stay in the current browser session
+Live site: https://abivelyk.github.io/Akku-V2/
 
-## Files
+## Changing the start date
+In `index.html`, find `STORY_START` and edit the `new Date(year, month, day)` line
+(months are 0-based: January = 0, June = 5).
 
-- `index.html` — room markup, navigation, and page metadata
-- `styles.css` — museum styling and responsive layouts
-- `app.js` — Three.js architecture, controls, rooms, and interactions
-- `assets/` — photographs, films, soundtrack, and video posters
-- `og-cover.jpg` — social sharing preview image
+## Link preview
+`assets/og-cover.jpg` (1200×630) is the card shown when the link is shared on WhatsApp, Instagram, etc.
 
-There is no build step. Serve the project folder over HTTP, with `assets/` alongside `index.html`, or publish the folder contents to GitHub Pages.
-
-## Performance notes
-
-Artwork textures load in small batches instead of opening 26 image requests at once. Smaller screens use a lower WebGL pixel ratio, skip the mirrored frame copies, and use fewer concurrent image loads. Animation pauses while the page is hidden.
-
-## Live version
-
-[abivelyk.github.io/Akku-V2](https://abivelyk.github.io/Akku-V2/)
+## Deploying
+Upload `index.html` and the `assets/` folder to the root of the `abivelyk/Akku-V2` repository.
+GitHub Pages will publish it at the URL above.
