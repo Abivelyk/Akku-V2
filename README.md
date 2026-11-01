@@ -1,22 +1,24 @@
-# AKKÚ 
+# AKKÚ
 
-A small universe, made for one person. A scroll-driven 3D story built with Three.js:
+A small, scroll-driven memory story made for one person. This version uses a quiet observatory setting, warm bronze photo frames, restrained motion, and the original photographs, films, letter, and soundtrack.
 
-- **26 photographs** (`assets/p01.jpg` – `p26.jpg`) floating as glass frames; tap any to view up close
-- **8 short films** in a private screening room (`v02`, `v03`, `clip02`, `clip03`, `clip04`, `clip06`, `clip07`, `clip08`)
-- **"Jaavedaan Hai"** as the background soundtrack (`assets/audio_3.mp3`), auto-pausing while a clip plays
-- **A letter** with four "open when…" envelopes
-- **A live counter** that counts up from **24 June 2026**
+## Project files
 
-Live site: https://abivelyk.github.io/Akku-V2/
+- `index.html` — page structure, metadata, and story content
+- `styles.css` — observatory theme, layout, and responsive styles
+- `app.js` — Three.js gallery, video reel, soundtrack, lightbox, and live counter
+- `assets/` — photographs, video clips, soundtrack, preview image, and generated backdrop
 
-## Changing the start date
-In `index.html`, find `STORY_START` and edit the `new Date(year, month, day)` line
-(months are 0-based: January = 0, June = 5).
+There is no build step. Serve the project folder over HTTP or publish its contents with the `assets/` directory at the same path.
 
-## Link preview
-`assets/og-cover.jpg` (1200×630) is the card shown when the link is shared on WhatsApp, Instagram, etc.
+## Story start date
 
-## Deploying
-Upload `index.html` and the `assets/` folder to the root of the `abivelyk/Akku-V2` repository.
-GitHub Pages will publish it at the URL above.
+Edit `STORY_START` in `app.js` to change the date used by the counter. The month value is zero-based (`5` means June).
+
+## Share preview image
+
+`og-cover.jpg` is the 1200 × 630 image used by the social sharing metadata.
+
+## Live version
+
+The currently published page is [abivelyk.github.io/Akku-V2](https://abivelyk.github.io/Akku-V2/). It is separate from this local project copy.
