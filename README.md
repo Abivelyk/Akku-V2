@@ -1,4 +1,4 @@
-# AKKÚ · A 3D Scroll Story
+# AKKÚ 
 
 A small universe, made for one person. A scroll-driven 3D story built with Three.js:
 
