@@ -3,322 +3,981 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
-  <title>AKKÚ · A 3D Scroll Story</title>
-  <meta name="description" content="A small universe, made for one person. Twenty-six memories, eight little films and one letter, in 3D." />
-  <meta name="theme-color" content="#03060c" />
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%99%A5%3C/text%3E%3C/svg%3E" />
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content="AKKÚ · A 3D Scroll Story" />
-  <meta property="og:description" content="A small universe, made for one person. Put on headphones and scroll." />
-  <meta property="og:url" content="https://abivelyk.github.io/Akku-V2/" />
-  <meta property="og:image" content="https://abivelyk.github.io/Akku-V2/og-cover.jpg" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="AKKÚ · A 3D Scroll Story" />
-  <meta name="twitter:description" content="A small universe, made for one person." />
-  <meta name="twitter:image" content="https://abivelyk.github.io/Akku-V2/og-cover.jpg" />
+  <title>AKKÚ · The Private 3D Gallery</title>
   <script defer src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="./styles.css?v=archive-4" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  
+  <meta name="description" content="A private 3D gallery for Akkú, with a marble rotunda, twenty-six framed memories, a cinema, and a letter." />
+  <meta name="theme-color" content="#08080a" />
+  <meta property="og:title" content="AKKÚ · The Private 3D Gallery" />
+  <meta property="og:description" content="Twenty-six framed memories inside a private 3D gallery." />
+  <meta property="og:url" content="https://abivelyk.github.io/Akku-V2/" />
+  <meta property="og:image" content="https://abivelyk.github.io/Akku-V2/og-cover.jpg" />
+  <link rel="preload" as="image" href="./assets/p01.jpg" fetchpriority="high" />
+  <link rel="stylesheet" href="./styles.css?v=restored-3d-1" />
 </head>
-<body class="selection:bg-pink-400/30 selection:text-pink-100 is-entry-open">
-  <img id="observatoryBackdrop" src="./assets/observatory-backdrop.jpg" alt="" aria-hidden="true" fetchpriority="high" />
+<body class="min-h-screen selection:bg-amber-500/30 selection:text-amber-100">
 
   <!-- ===================================================================== -->
-  <!-- FIXED REAL-TIME 3D WEBGL SCROLL CANVAS                                -->
+  <!-- PRIMARY REAL-TIME PHOTOREALISTIC PBR 3D MUSEUM CANVAS (Three.js r128) -->
   <!-- ===================================================================== -->
-  <canvas id="webglCanvas"></canvas>
-  <canvas id="burstCanvas"></canvas>
+  <canvas id="webgl3dCanvas" title="Drag to look 360° around the marble rotunda · Scroll to walk · Click any framed artwork on the walls"></canvas>
 
-  <!-- Lightweight vector star chart over the 3D gallery. -->
-  <div id="sceneTelemetry" class="scene-telemetry" aria-hidden="true">
-    <svg class="scene-chart" viewBox="0 0 900 900" focusable="false">
-      <defs>
-        <linearGradient id="orbitInk" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stop-color="#f1d2a0" stop-opacity=".08" />
-          <stop offset=".48" stop-color="#f1d2a0" stop-opacity=".72" />
-          <stop offset="1" stop-color="#b9d7ee" stop-opacity=".24" />
-        </linearGradient>
-        <radialGradient id="starCore">
-          <stop stop-color="#fff8e8" />
-          <stop offset="1" stop-color="#e8bd83" stop-opacity="0" />
-        </radialGradient>
-      </defs>
-      <ellipse class="chart-orbit chart-orbit--wide" cx="450" cy="450" rx="390" ry="168" />
-      <ellipse class="chart-orbit chart-orbit--tilt" cx="450" cy="450" rx="315" ry="235" transform="rotate(-34 450 450)" />
-      <ellipse class="chart-orbit chart-orbit--fine" cx="450" cy="450" rx="250" ry="112" transform="rotate(24 450 450)" />
-      <path class="chart-route" d="M112 279 246 328 337 210 472 283 568 177 713 245 786 362" />
-      <path class="chart-route chart-route--second" d="M246 328 287 514 443 578 568 477 713 545 786 362" />
-      <g class="chart-stars">
-        <circle cx="112" cy="279" r="8" /><circle cx="246" cy="328" r="6" />
-        <circle cx="337" cy="210" r="7" /><circle cx="472" cy="283" r="5" />
-        <circle cx="568" cy="177" r="9" /><circle cx="713" cy="245" r="6" />
-        <circle cx="786" cy="362" r="8" /><circle cx="287" cy="514" r="5" />
-        <circle cx="443" cy="578" r="7" /><circle cx="568" cy="477" r="5" />
-        <circle cx="713" cy="545" r="7" />
-      </g>
-      <g class="chart-crosshair"><path d="M450 396v108M396 450h108" /><circle cx="450" cy="450" r="20" /></g>
-    </svg>
-    <div class="telemetry-label telemetry-label--top"><span class="telemetry-pip"></span> ARCHIVE SIGNAL <b>01—26</b></div>
-    <div class="telemetry-label telemetry-label--side">MEMORY ORBIT <span>LIVE</span></div>
-    <div class="telemetry-label telemetry-label--bottom">AKKÚ <i>·</i> DEEP SKY COLLECTION</div>
+  <!-- Secondary 2D Interactive Overlay Canvases -->
+  <canvas id="cosmosCanvas" class="fixed inset-0 w-full h-full pointer-events-none z-0 opacity-20"></canvas>
+  <canvas id="burstCanvas" class="fixed inset-0 w-full h-full pointer-events-none z-50"></canvas>
+
+  <!-- Background Soundtrack Audio Element -->
+  <audio id="bgMusic" preload="metadata" loop playsinline src="./assets/audio_3.mp3"></audio>
+
+  <!-- Toast Notification Banner -->
+  <div id="toastBanner" class="fixed top-20 right-4 z-50 max-w-xs glass-card px-4 py-3 rounded-2xl shadow-2xl border border-amber-400/30 transform translate-x-[130%] transition-transform duration-300 flex items-center gap-3 pointer-events-none">
+    <span id="toastIcon" class="text-lg">✦</span>
+    <p id="toastMessage" class="text-xs sm:text-sm text-amber-100 font-medium leading-snug">3D Architectural Gallery Ready</p>
   </div>
 
-  <!-- Continuous Background Soundtrack ("Jaavedaan Hai") -->
-  <audio id="bgMusic" preload="none" loop playsinline src="./assets/audio_3.mp3"></audio>
-
   <!-- ===================================================================== -->
-  <!-- Immersive observatory entry -->
-  <div id="entryOverlay" class="entry-overlay is-open" role="dialog" aria-modal="true" aria-labelledby="entryTitle" aria-describedby="entryDescription">
-    <div class="entry-brand" aria-label="Akkú">AKKÚ</div>
-    <div class="entry-index">SCROLL 3D STORY</div>
-    <div class="entry-copy">
-      <span class="entry-kicker">FOR AKKÚ · A PRIVATE MEMORY STORY</span>
-      <h1 id="entryTitle" class="font-serif-display">A small universe,<br /><em>made for one person.</em></h1>
-      <p id="entryDescription">Put on headphones for <em>“Jaavedaan Hai”</em>. Scroll gently through twenty-six memories, visit the screening room, and read your letter under the stars.</p>
-      <button id="enterExperienceBtn" type="button" class="entry-cta" autofocus>Begin the story</button>
-      <button id="entryMusicToggleBtn" type="button" class="entry-track" aria-label="Play Jaavedaan Hai" aria-pressed="false">Play “Jaavedaan Hai”</button>
+  <!-- 3D SELECTED ARTWORK INSPECTOR HUD (Appears when clicking a 3D frame)  -->
+  <!-- ===================================================================== -->
+  <div id="holoInspectorHud" class="fixed top-20 left-4 z-40 hidden max-w-xs glass-card p-4 rounded-2xl border border-amber-400/50 shadow-2xl space-y-2.5">
+    <div class="flex items-center justify-between gap-2">
+      <span id="holoFrameBadge" class="font-mono-tech text-[10px] uppercase tracking-widest text-amber-300">EXHIBIT #01 // 26</span>
+      <button id="holoCloseBtn" type="button" class="text-xs font-mono-tech text-gray-400 hover:text-white">✕</button>
     </div>
-    <div class="entry-footnote">TWENTY-SIX MEMORIES · ONE SONG · A LETTER</div>
+    <h4 id="holoFrameTitle" class="font-serif-display text-2xl italic text-white leading-tight">01: The first little universe</h4>
+    <p id="holoFrameNote" class="text-xs text-gray-300 italic leading-relaxed"></p>
+    <div class="flex items-center gap-2 pt-1">
+      <button id="holoPrev3dBtn" type="button" class="px-2.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 font-mono-tech text-[10px] text-white">← Prev 3D</button>
+      <button id="holoExpandHdBtn" type="button" class="btn-gradient px-3 py-1.5 rounded-xl font-mono-tech text-[10px] uppercase flex-1">Inspect HD ⤢</button>
+      <button id="holoNext3dBtn" type="button" class="px-2.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 font-mono-tech text-[10px] text-white">Next 3D →</button>
+    </div>
   </div>
 
-  <!-- ULTRA-CLEAN MINIMAL TOP BAR                                           -->
   <!-- ===================================================================== -->
-  <header class="fixed top-4 left-4 right-4 z-30 flex items-center justify-between pointer-events-none">
-    <!-- Brand & Live Scroll Progress -->
-    <a href="#chapter-overture" class="glass-pill px-4 py-2 rounded-full flex items-center gap-3 pointer-events-auto hover:border-pink-300/40 transition">
-      <span class="w-2 h-2 rounded-full bg-pink-400 shadow-[0_0_12px_#f472b6]"></span>
-      <span class="font-serif-display text-lg italic text-white leading-none">Akkú</span>
-      <span class="text-white/20">|</span>
-      <span id="scrollPctBadge" class="font-mono-tech text-[10px] tracking-widest text-pink-200/90">00%</span>
-    </a>
+  <!-- PRE-ENTRY ONBOARDING MODAL ("A Note Before You Enter")                -->
+  <!-- ===================================================================== -->
+  <div id="introModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-xl transition-opacity duration-500">
+    <div class="glass-card max-w-lg w-full rounded-3xl p-6 sm:p-8 border border-amber-200/20 shadow-2xl relative overflow-hidden">
+      <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full accent-dot"></span>
+          <span class="font-mono-tech text-[11px] uppercase tracking-widest text-amber-200/90">PRIVATE ARCHITECTURAL EXHIBITION // AKKÚ</span>
+        </div>
+        <span id="introStepBadge" class="font-mono-tech text-xs text-white/50">01 / 03</span>
+      </div>
 
-    <!-- Minimal Chapter Links -->
-    <nav aria-label="Story Chapters" class="hidden md:flex items-center gap-1 glass-pill p-1 rounded-full pointer-events-auto">
-      <a href="#chapter-overture" data-chap="0" class="chap-link px-3.5 py-1.5 rounded-full font-mono-tech text-[10px] uppercase tracking-wider bg-white/15 text-white transition">01 · Overture</a>
-      <a href="#chapter-memories" data-chap="1" class="chap-link px-3.5 py-1.5 rounded-full font-mono-tech text-[10px] uppercase tracking-wider text-pink-100/70 hover:text-white transition">02 · 26 Memories</a>
-      <a href="#chapter-cinema" data-chap="2" class="chap-link px-3.5 py-1.5 rounded-full font-mono-tech text-[10px] uppercase tracking-wider text-pink-100/70 hover:text-white transition">03 · Cinema</a>
-      <a href="#chapter-letter" data-chap="3" class="chap-link px-3.5 py-1.5 rounded-full font-mono-tech text-[10px] uppercase tracking-wider text-pink-100/70 hover:text-white transition">04 · Letter</a>
-      <a href="#chapter-forever" data-chap="4" class="chap-link px-3.5 py-1.5 rounded-full font-mono-tech text-[10px] uppercase tracking-wider text-pink-100/70 hover:text-white transition">05 · Forever</a>
-    </nav>
+      <!-- Step 1 -->
+      <div id="introStep1" class="space-y-4">
+        <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-400/30 flex items-center justify-center font-serif-display text-xl italic text-amber-200">
+          I
+        </div>
+        <h2 class="font-serif-display text-3xl sm:text-4xl italic text-white">Use headphones.</h2>
+        <p class="text-sm sm:text-base text-gray-300 leading-relaxed">
+          There is one continuous soundtrack for this private museum — <span class="text-amber-200 italic">"Jaavedaan Hai"</span>. Let it play softly while you walk across the marble rotunda and inspect the twenty-six framed works.
+        </p>
+      </div>
 
-    <!-- Soundtrack Pill -->
-    <button id="musicToggleBtn" type="button" class="glass-pill px-4 py-2 rounded-full flex items-center gap-2.5 text-[11px] font-mono-tech text-pink-100 hover:border-pink-300/40 transition pointer-events-auto" aria-label="Play Jaavedaan Hai" aria-pressed="false">
-      <span id="musicStateLabel">Play</span>
-      <span class="hidden sm:inline italic font-serif-display text-sm text-white">“Jaavedaan Hai”</span>
-    </button>
+      <!-- Step 2 -->
+      <div id="introStep2" class="space-y-4 hidden">
+        <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-400/30 flex items-center justify-center font-serif-display text-xl italic text-amber-200">
+          II
+        </div>
+        <h2 class="font-serif-display text-3xl sm:text-4xl italic text-white">Walk the 3D Gallery.</h2>
+        <p class="text-sm sm:text-base text-gray-300 leading-relaxed">
+          Every photograph is mounted in a physical walnut-and-brass museum frame with passe-partout matting, overhead 3000K halogen spotlights, and soft mirrored reflections across Nero Marquina marble. Click any painting in 3D to walk directly up to it.
+        </p>
+      </div>
+
+      <!-- Step 3 -->
+      <div id="introStep3" class="space-y-4 hidden">
+        <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-400/30 flex items-center justify-center font-serif-display text-xl italic text-amber-200">
+          III
+        </div>
+        <h2 class="font-serif-display text-3xl sm:text-4xl italic text-white">Watch carefully.</h2>
+        <p class="text-sm sm:text-base text-gray-300 leading-relaxed">
+          Take your time. Inspect all twenty-six photographs, watch all eight original films in the private screening room, and unfold the wax-sealed letter.
+        </p>
+      </div>
+
+      <div class="mt-8 pt-5 border-t border-white/10 flex items-center justify-between gap-3">
+        <div class="flex items-center gap-2">
+          <button id="introDot1" type="button" class="w-6 h-1.5 rounded-full bg-amber-300 transition-all" aria-label="Step 1"></button>
+          <button id="introDot2" type="button" class="w-2.5 h-1.5 rounded-full bg-white/25 transition-all" aria-label="Step 2"></button>
+          <button id="introDot3" type="button" class="w-2.5 h-1.5 rounded-full bg-white/25 transition-all" aria-label="Step 3"></button>
+        </div>
+
+        <div class="flex items-center gap-2.5">
+          <button id="introSkipBtn" type="button" class="px-3.5 py-2 rounded-xl text-xs font-mono-tech uppercase tracking-wider text-gray-400 hover:text-white transition">
+            Skip
+          </button>
+          <button id="introBackBtn" type="button" class="hidden px-4 py-2 rounded-xl text-xs font-mono-tech uppercase tracking-wider bg-white/10 hover:bg-white/15 text-white transition">
+            Back
+          </button>
+          <button id="introNextBtn" type="button" class="btn-gradient px-5 py-2.5 rounded-xl text-xs font-mono-tech uppercase tracking-wider">
+            Next →
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- STICKY NAVIGATION & 3D TELEMETRY HEADER                               -->
+  <!-- ===================================================================== -->
+  <header class="sticky top-0 z-40 backdrop-blur-xl bg-black/65 border-b border-white/10">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 h-16 flex items-center justify-between gap-2">
+      <div class="flex items-center gap-3 shrink-0">
+        <button id="brandHomeBtn" type="button" class="flex items-center gap-2.5 text-left group">
+          <span class="w-2.5 h-2.5 rounded-full accent-dot group-hover:scale-125 transition-transform"></span>
+          <div>
+            <span class="font-serif-display text-lg sm:text-xl font-semibold tracking-wider text-white block leading-none">AKKÚ · THE GALLERY</span>
+            <span class="font-mono-tech text-[10px] text-amber-200/80 tracking-widest hidden sm:block">
+              <span id="fpsCounterText">— FPS</span> · <span id="frameTimeText">—ms</span> · LIVE WEBGL · PBR
+            </span>
+          </div>
+        </button>
+      </div>
+
+      <nav aria-label="Rooms" class="flex items-center gap-1 overflow-x-auto py-1 max-w-full no-scrollbar">
+        <button type="button" data-room-target="home" class="room-nav-btn px-2.5 py-1.5 rounded-xl font-mono-tech text-[11px] uppercase tracking-wider bg-amber-500/20 text-amber-200 border border-amber-400/40 shrink-0 transition">
+          01 · Home
+        </button>
+        <button type="button" data-room-target="memories" class="room-nav-btn px-2.5 py-1.5 rounded-xl font-mono-tech text-[11px] uppercase tracking-wider text-gray-300 hover:text-white hover:bg-white/5 border border-transparent shrink-0 transition">
+          02 · Memories
+        </button>
+        <button type="button" data-room-target="cinema" class="room-nav-btn px-2.5 py-1.5 rounded-xl font-mono-tech text-[11px] uppercase tracking-wider text-gray-300 hover:text-white hover:bg-white/5 border border-transparent shrink-0 transition">
+          03 · Cinema
+        </button>
+        <button type="button" data-room-target="letter" class="room-nav-btn px-2.5 py-1.5 rounded-xl font-mono-tech text-[11px] uppercase tracking-wider text-gray-300 hover:text-white hover:bg-white/5 border border-transparent shrink-0 transition">
+          04 · Letter
+        </button>
+        <button type="button" data-room-target="museum" class="room-nav-btn px-2.5 py-1.5 rounded-xl font-mono-tech text-[11px] uppercase tracking-wider text-gray-300 hover:text-white hover:bg-white/5 border border-transparent shrink-0 transition">
+          05 · Museum
+        </button>
+        <button type="button" data-room-target="play" class="room-nav-btn px-2.5 py-1.5 rounded-xl font-mono-tech text-[11px] uppercase tracking-wider text-gray-300 hover:text-white hover:bg-white/5 border border-transparent shrink-0 transition">
+          06 · Sparks ✨
+        </button>
+        <button type="button" data-room-target="forever" class="room-nav-btn px-2.5 py-1.5 rounded-xl font-mono-tech text-[11px] uppercase tracking-wider text-gray-300 hover:text-white hover:bg-white/5 border border-transparent shrink-0 transition">
+          07 · Forever
+        </button>
+      </nav>
+
+      <div class="flex items-center gap-1.5 shrink-0">
+        <button id="togglePure3dBtn" type="button" class="px-3 py-1.5 rounded-xl btn-gradient text-[11px] font-mono-tech uppercase tracking-wider flex items-center gap-1.5" title="Walk through the 3D Architectural Museum without UI panels">
+          <span>🕶️</span>
+          <span id="pure3dBtnLabel">Pure 3D View</span>
+        </button>
+        <button id="openCustomMediaModalBtn" type="button" class="px-2.5 py-1.5 rounded-xl glass-card text-[11px] font-mono-tech text-amber-200 hover:text-white flex items-center gap-1" title="Upload additional Photos, Videos & Music">
+          <span>📁</span>
+          <span class="hidden xl:inline">Add Media</span>
+        </button>
+        <button id="constellationStatusBtn" type="button" class="hidden md:flex px-2.5 py-1.5 rounded-xl glass-card text-[11px] font-mono-tech text-amber-200 items-center gap-1" title="Curator Notes">
+          <span>✦</span>
+          <span id="starCountLabel">0 / 7 Stars</span>
+        </button>
+        <button id="themeCycleBtn" type="button" class="hidden sm:flex px-2.5 py-1.5 rounded-xl glass-card text-[11px] font-mono-tech text-gray-200 hover:text-white items-center gap-1" title="Switch Gallery Lighting Temperature">
+          <span>🎨</span>
+          <span id="themeNameLabel">Cosmic</span>
+        </button>
+      </div>
+    </div>
   </header>
 
-  <!-- Subtle Right-Side Scroll Progress Bar -->
-  <div class="fixed right-3 top-1/2 -translate-y-1/2 h-36 w-1 rounded-full bg-white/10 z-30 pointer-events-none overflow-hidden hidden sm:block">
-    <div id="scrollRailFill" class="w-full bg-gradient-to-b from-pink-300 to-amber-200 rounded-full transition-all duration-75" style="height: 0%"></div>
-  </div>
+  <!-- ===================================================================== -->
+  <!-- FLOATING 3D ARCHITECTURAL WALKTHROUGH DOCK                            -->
+  <!-- ===================================================================== -->
+  <div class="fixed bottom-20 left-1/2 -translate-x-1/2 z-30 max-w-[96vw] glass-card px-3 py-2 rounded-2xl border border-amber-400/30 shadow-2xl flex flex-wrap items-center justify-center gap-1.5 sm:gap-2">
+    <span class="font-mono-tech text-[10px] uppercase tracking-wider text-amber-200/90 px-1.5 hidden sm:inline">3D Wing Layout:</span>
+    <button type="button" data-3d-formation="helix" class="formation-3d-btn px-2.5 py-1 rounded-xl font-mono-tech text-[11px] bg-amber-500/25 text-amber-100 border border-amber-400/40" title="Grand Circular Rotunda Wing">
+      🧬 Helix 3D
+    </button>
+    <button type="button" data-3d-formation="corridor" class="formation-3d-btn px-2.5 py-1 rounded-xl font-mono-tech text-[11px] bg-white/5 text-gray-300 hover:text-white border border-transparent" title="Long Louvre Marble Corridor">
+      🏛️ 3D Tunnel
+    </button>
+    <button type="button" data-3d-formation="ring" class="formation-3d-btn px-2.5 py-1 rounded-xl font-mono-tech text-[11px] bg-white/5 text-gray-300 hover:text-white border border-transparent" title="Double-Tier Mezzanine Hall">
+      🪐 Saturn Ring 3D
+    </button>
+    <button type="button" data-3d-formation="heart" class="formation-3d-btn px-2.5 py-1 rounded-xl font-mono-tech text-[11px] bg-white/5 text-gray-300 hover:text-white border border-transparent" title="Collector's Curved Salon">
+      💖 3D Heart Wall
+    </button>
 
-  <!-- Floating Active 3D Frame Caption Pill (Bottom-Center during Memories Scroll) -->
-  <div id="activeFrameHud" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-30 opacity-0 translate-y-3 transition-all duration-300 pointer-events-auto">
-      <button id="inspectActiveFrameBtn" type="button" class="glass-pill px-5 py-2.5 rounded-full flex items-center gap-3 hover:border-pink-300/50 transition" aria-label="View the active photograph">
-      <span id="hudFrameNum" class="font-mono-tech text-[10px] uppercase tracking-widest text-pink-300">FRAME 01 / 26</span>
-      <span id="hudFrameTitle" class="font-serif-display text-lg sm:text-xl italic text-white">The first little universe</span>
-        <span class="font-mono-tech text-[10px] text-pink-200 bg-white/10 px-2.5 py-0.5 rounded-full">View photo</span>
+    <span class="h-4 w-px bg-white/15 mx-0.5 hidden sm:inline"></span>
+
+    <button id="droneTourToggleBtn" type="button" class="px-2.5 py-1 rounded-xl font-mono-tech text-[11px] bg-white/10 hover:bg-white/20 text-amber-200 border border-amber-400/30">
+      🚁 Auto-Fly Tour
+    </button>
+    <button id="warpSpeedToggleBtn" type="button" class="px-2.5 py-1 rounded-xl font-mono-tech text-[11px] bg-white/10 hover:bg-white/20 text-gray-200 border border-white/15">
+      ⚡ Warp Drive
+    </button>
+    <button id="reset3dCameraBtn" type="button" class="px-2.5 py-1 rounded-xl font-mono-tech text-[11px] bg-white/5 hover:bg-white/15 text-gray-300">
+      🎯 Center Cam
     </button>
   </div>
 
   <!-- ===================================================================== -->
-  <!-- SCROLL-DRIVEN STORY TRACK (Drives the 3D Spline Camera & Animations)  -->
+  <!-- MAIN CONTENT CONTAINER                                                -->
   <!-- ===================================================================== -->
-  <main class="relative z-10 pointer-events-none">
+  <main id="mainOverlayContainer" class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-6 pb-40 pointer-events-none">
 
-  <!-- CHAPTER 01: THE OVERTURE (0% - 13%) -->
-    <section id="chapter-overture" class="min-h-[120vh] flex flex-col justify-between px-4 sm:px-8 pt-28 pb-16 max-w-6xl mx-auto">
-      <div class="max-w-xl space-y-5 pointer-events-auto glass-panel p-7 sm:p-9 rounded-[2rem] mt-auto mb-12">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-500/15 border border-pink-300/30 font-mono-tech text-[10px] uppercase tracking-widest text-pink-200">
-          <span>CHAPTER 01 · OVERTURE</span>
+    <!-- =================================================================== -->
+    <!-- ROOM 01: HOME (THE GRAND MARBLE ROTUNDA)                            -->
+    <!-- =================================================================== -->
+    <section id="room-home" class="room-section active space-y-10 pointer-events-auto">
+
+      <div class="flex flex-wrap items-center justify-between gap-3 glass-card px-4 py-3 rounded-2xl">
+        <div class="flex items-center gap-2.5">
+          <span class="w-2 h-2 rounded-full accent-dot"></span>
+          <span class="font-mono-tech text-xs uppercase tracking-widest text-amber-200">ARCHITECTURAL PBR 3D GALLERY // 26 FRAMED WORKS · 08 FILMS</span>
         </div>
-
-        <h2 class="font-serif-display text-4xl sm:text-6xl italic font-normal leading-[1.06] text-rose-gradient">
-          Some things are too important to be ordinary.
-        </h2>
-
-        <p class="text-sm sm:text-base text-pink-100/80 leading-relaxed font-light">
-          Twenty-six photographs of you. Eight little films that still make me smile. One song that stays in the air while you move through it. Scroll gently — the camera will carry you through our universe.
-        </p>
-
-        <div class="pt-2 flex items-center gap-4 text-xs font-mono-tech text-pink-200/80">
-          <span class="animate-float inline-flex items-center gap-1.5">↓ Scroll to glide through 3D space</span>
-          <span>•</span>
-          <span>Tap any 3D portrait to zoom</span>
-        </div>
-      </div>
-    </section>
-
-  <!-- CHAPTER 02: THE 26 MEMORIES SCROLL PROMENADE (13% - 58%) -->
-    <section id="chapter-memories" class="min-h-[420vh] relative px-4 sm:px-8">
-      <div class="sticky top-20 max-w-md pointer-events-none">
-        <div class="glass-pill px-4 py-2 rounded-full inline-flex items-center gap-2.5">
-          <span class="font-mono-tech text-[10px] uppercase tracking-widest text-pink-300">CHAPTER 02 · THE 26 PHOTOGRAPHS</span>
-          <span class="text-xs font-serif-display italic text-white">Scroll to float past each memory</span>
+        <div class="flex flex-wrap items-center gap-3 text-xs font-mono-tech text-gray-300">
+          <span><strong>Drag Background:</strong> 360° Gallery Walk</span>
+          <span class="hidden sm:inline">•</span>
+          <span><strong>Click Any Painting:</strong> Walk Up to Frame</span>
+          <span class="hidden sm:inline">•</span>
+          <button id="quickPure3dHeroBtn" type="button" class="text-amber-200 underline hover:text-white">Hide HUD Panels for Fullscreen 3D →</button>
         </div>
       </div>
 
-      <!-- Poetic Waypoints spaced along the 420vh 3D Promenade -->
-      <div class="max-w-6xl mx-auto pt-[35vh] space-y-[85vh]">
-        <div class="max-w-sm glass-panel p-6 rounded-3xl pointer-events-auto">
-          <span class="font-mono-tech text-[10px] text-pink-300 uppercase tracking-widest">FRAMES 01 — 08</span>
-          <h3 class="font-serif-display text-3xl italic text-white mt-1">Where ordinary minutes turned into gold.</h3>
-          <p class="text-xs sm:text-sm text-pink-100/75 mt-2 leading-relaxed">
-            Some pictures feel like proof that a moment happened exactly the way you remember it. Tap any floating glass frame in the 3D scene to view it up close.
-          </p>
-        </div>
-
-        <div class="max-w-sm ml-auto glass-panel p-6 rounded-3xl pointer-events-auto">
-          <span class="font-mono-tech text-[10px] text-pink-300 uppercase tracking-widest">FRAMES 09 — 17</span>
-          <h3 class="font-serif-display text-3xl italic text-white mt-1">The face behind the feeling.</h3>
-          <p class="text-xs sm:text-sm text-pink-100/75 mt-2 leading-relaxed">
-            Every argument with a bad mood loses the second that smile shows up. Even through a screen, some photographs carry their own warmth.
-          </p>
-        </div>
-
-        <div class="max-w-sm glass-panel p-6 rounded-3xl pointer-events-auto">
-          <span class="font-mono-tech text-[10px] text-pink-300 uppercase tracking-widest">FRAMES 18 — 26</span>
-          <h3 class="font-serif-display text-3xl italic text-white mt-1">Saved for forever.</h3>
-          <p class="text-xs sm:text-sm text-pink-100/75 mt-2 leading-relaxed italic">
-            “I was so wrong not to doubt your Medellin, tangerine dreams.”
-          </p>
-        </div>
-      </div>
-    </section>
-
-  <!-- CHAPTER 03: THE 3D SCREENING ROOM (58% - 73%) -->
-    <section id="chapter-cinema" class="min-h-[135vh] flex items-center justify-center px-4 sm:px-8 py-20">
-      <div class="max-w-4xl w-full glass-panel rounded-[2.25rem] p-6 sm:p-10 pointer-events-auto space-y-6">
-        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b border-white/10 pb-4">
-          <div>
-            <span class="font-mono-tech text-[10px] uppercase tracking-widest text-pink-300">CHAPTER 03 · PRIVATE SCREENING ROOM</span>
-            <h2 class="font-serif-display text-3xl sm:text-5xl italic text-white mt-1">A few seconds that move.</h2>
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <div class="lg:col-span-7 space-y-5 glass-card p-6 sm:p-8 rounded-3xl border border-white/15">
+          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-400/30 text-xs text-amber-200 font-mono-tech">
+            <span>✦</span>
+            <span>Architectural Rotunda · Real-Time WebGL</span>
           </div>
-          <span id="activeClipBadge" class="font-mono-tech text-xs text-pink-200 bg-pink-500/20 border border-pink-300/30 px-3.5 py-1 rounded-full self-start sm:self-auto">
-            01 · Rahein Teri
-          </span>
+
+          <h1 class="font-serif-display text-5xl sm:text-6xl lg:text-7xl font-normal italic leading-[1.06] text-gradient">
+            A small universe, made for one person.
+          </h1>
+
+          <p class="text-base sm:text-lg text-gray-200 leading-relaxed max-w-2xl">
+            A private fine-art museum built for Akku. Walk across the Nero Marquina marble floor, inspect all twenty-six original photographs mounted in walnut-and-brass frames under warm 3000K gallery spotlights, and watch all eight original films in the screening room.
+          </p>
+
+          <div class="flex flex-wrap items-center gap-3 pt-2">
+            <button id="enterPure3dFlightBtn" type="button" class="btn-gradient px-6 py-3.5 rounded-2xl text-sm font-mono-tech uppercase tracking-wider">
+              🚀 Fly Through 3D Gallery Now
+            </button>
+            <button type="button" data-room-jump="memories" class="glass-card px-5 py-3.5 rounded-2xl text-sm font-mono-tech uppercase tracking-wider text-white hover:border-amber-400/50">
+              Begin With The Memories →
+            </button>
+            <button type="button" data-room-jump="letter" class="glass-card px-5 py-3.5 rounded-2xl text-sm font-mono-tech uppercase tracking-wider text-white hover:border-amber-400/50">
+              Read The Letter First →
+            </button>
+            <button id="randomCapsuleBtn" type="button" class="glass-card px-5 py-3.5 rounded-2xl text-sm font-mono-tech uppercase tracking-wider text-amber-200 hover:border-amber-400/50 flex items-center gap-2">
+              <span>🍾</span>
+              <span>Pull a Memory Capsule</span>
+            </button>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3">
+            <button type="button" data-room-jump="memories" class="glass-card p-3.5 rounded-2xl text-left group">
+              <div class="font-serif-display text-3xl sm:text-4xl font-semibold text-white group-hover:text-amber-200 transition">26</div>
+              <div class="font-mono-tech text-[10px] uppercase tracking-wider text-gray-400 mt-1">Photographs</div>
+            </button>
+            <button type="button" data-room-jump="cinema" class="glass-card p-3.5 rounded-2xl text-left group">
+              <div class="font-serif-display text-3xl sm:text-4xl font-semibold text-white group-hover:text-amber-200 transition">02</div>
+              <div class="font-mono-tech text-[10px] uppercase tracking-wider text-gray-400 mt-1">Little Films</div>
+            </button>
+            <button id="heroSoundtrackCardBtn" type="button" class="glass-card p-3.5 rounded-2xl text-left group">
+              <div class="font-serif-display text-3xl sm:text-4xl font-semibold text-white group-hover:text-amber-200 transition">01</div>
+              <div class="font-mono-tech text-[10px] uppercase tracking-wider text-gray-400 mt-1">Soundtrack ♫</div>
+            </button>
+            <button type="button" data-room-jump="forever" class="glass-card p-3.5 rounded-2xl text-left group">
+              <div class="font-serif-display text-3xl sm:text-4xl font-semibold text-amber-200">∞</div>
+              <div class="font-mono-tech text-[10px] uppercase tracking-wider text-gray-400 mt-1">Reasons</div>
+            </button>
+          </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
-          <!-- Video Player -->
-          <div class="md:col-span-6 relative aspect-[9/16] max-h-[440px] mx-auto w-full rounded-2xl overflow-hidden bg-black border border-white/15 shadow-2xl flex items-center justify-center">
+        <!-- Right Column: Featured Museum Frame -->
+        <div class="lg:col-span-5">
+          <div id="heroTiltCard" class="glass-card rounded-3xl p-4 sm:p-5 border border-white/15 shadow-2xl relative group">
+            <div class="relative aspect-[4/5] w-full rounded-2xl overflow-hidden bg-black/60 border border-amber-200/20">
+              <img id="heroFeatureImg" src="./assets/p01.jpg" alt="Akku featured photograph" class="w-full h-full object-cover transition-all duration-700 group-hover:scale-105" />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/15 to-transparent"></div>
+
+              <div class="absolute top-3 left-3 right-3 flex items-center justify-between">
+                <span class="px-3 py-1 rounded-full bg-black/65 backdrop-blur-md text-[11px] font-mono-tech uppercase tracking-wider text-amber-200 border border-white/10">
+                  FOR YOU · ALWAYS
+                </span>
+                <button id="heroShufflePhotoBtn" type="button" class="px-3 py-1 rounded-full bg-black/65 hover:bg-black/85 backdrop-blur-md text-xs font-mono-tech text-white border border-white/15 transition">
+                  Shuffle Frame ↻
+                </button>
+              </div>
+
+              <div class="absolute bottom-4 left-4 right-4 space-y-1">
+                <div id="heroPhotoIndex" class="font-mono-tech text-xs text-amber-200">FRAME 01 // 26</div>
+                <h2 id="heroPhotoTitle" class="font-serif-display text-2xl sm:text-3xl italic text-white">The first little universe</h2>
+                <p id="heroPhotoSub" class="text-xs text-gray-300">Some things are too important to be ordinary.</p>
+              </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-white/10 flex items-center justify-between gap-2">
+              <span class="font-mono-tech text-[11px] uppercase tracking-wider text-gray-400">Gallery Lighting:</span>
+              <div class="flex items-center gap-1.5">
+                <button type="button" data-set-theme="cosmic" class="theme-pill px-2.5 py-1 rounded-lg text-[11px] font-mono-tech bg-amber-500/25 text-amber-100 border border-amber-400/40">Cosmic</button>
+                <button type="button" data-set-theme="golden" class="theme-pill px-2.5 py-1 rounded-lg text-[11px] font-mono-tech bg-white/5 text-gray-300 hover:text-white">Tangerine</button>
+                <button type="button" data-set-theme="aurora" class="theme-pill px-2.5 py-1 rounded-lg text-[11px] font-mono-tech bg-white/5 text-gray-300 hover:text-white">Aurora</button>
+                <button type="button" data-set-theme="velvet" class="theme-pill px-2.5 py-1 rounded-lg text-[11px] font-mono-tech bg-white/5 text-gray-300 hover:text-white">Velvet</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Live Heartbeat & Universe Pulse Counter -->
+      <div class="glass-card rounded-3xl p-6 sm:p-8 border border-white/10">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+          <div>
+            <span class="font-mono-tech text-xs uppercase tracking-widest text-amber-200">SOME THINGS ARE TOO IMPORTANT TO BE ORDINARY</span>
+            <h2 class="font-serif-display text-3xl sm:text-4xl italic text-white mt-1">Every ordinary minute that turned into a memory.</h2>
+          </div>
+          <div class="flex items-center gap-2">
+            <label for="specialDateInput" class="font-mono-tech text-xs text-gray-400">Our Anchor Date:</label>
+            <input id="specialDateInput" type="date" value="2024-01-01" class="bg-black/50 border border-white/15 rounded-xl px-3 py-1.5 text-xs font-mono-tech text-amber-200 focus:outline-none focus:border-amber-400" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+          <div class="p-4 rounded-2xl bg-white/[0.03] border border-white/5">
+            <div id="counterDays" class="font-serif-display text-3xl sm:text-5xl font-semibold text-white">0</div>
+            <div class="font-mono-tech text-[11px] uppercase tracking-widest text-gray-400 mt-1">Days of Warmth</div>
+          </div>
+          <div class="p-4 rounded-2xl bg-white/[0.03] border border-white/5">
+            <div id="counterHours" class="font-serif-display text-3xl sm:text-5xl font-semibold text-white">0</div>
+            <div class="font-mono-tech text-[11px] uppercase tracking-widest text-gray-400 mt-1">Hours Shared</div>
+          </div>
+          <div class="p-4 rounded-2xl bg-white/[0.03] border border-white/5">
+            <div id="counterMinutes" class="font-serif-display text-3xl sm:text-5xl font-semibold text-white">0</div>
+            <div class="font-mono-tech text-[11px] uppercase tracking-widest text-gray-400 mt-1">Quiet Minutes</div>
+          </div>
+          <div class="p-4 rounded-2xl bg-white/[0.03] border border-white/5">
+            <div id="counterHeartbeats" class="font-serif-display text-3xl sm:text-5xl font-semibold text-amber-200">0</div>
+            <div class="font-mono-tech text-[11px] uppercase tracking-widest text-amber-200/80 mt-1">Heartbeats ♥</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Room Portal Map -->
+      <div class="space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="font-serif-display text-2xl sm:text-3xl italic text-white">Explore the Seven Architectural Wings</h3>
+          <span class="font-mono-tech text-xs text-gray-400">Each wing repositions the 3D gallery camera</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <button type="button" data-room-jump="memories" class="glass-card p-6 rounded-2xl text-left space-y-2 group">
+            <div class="flex items-center justify-between font-mono-tech text-xs text-amber-200">
+              <span>WING 02 // MEMORIES</span>
+              <span class="group-hover:translate-x-1 transition-transform">→</span>
+            </div>
+            <div class="font-serif-display text-2xl italic text-white">A wall for the little things.</div>
+            <p class="text-xs text-gray-400 leading-relaxed">Twenty-six original photographs with 3D Museum Walkthrough, Polaroid flip cards, and full-screen inspection.</p>
+          </button>
+
+          <button type="button" data-room-jump="cinema" class="glass-card p-6 rounded-2xl text-left space-y-2 group">
+            <div class="flex items-center justify-between font-mono-tech text-xs text-amber-200">
+              <span>WING 03 // CINEMA</span>
+              <span class="group-hover:translate-x-1 transition-transform">→</span>
+            </div>
+            <div class="font-serif-display text-2xl italic text-white">A few seconds that move.</div>
+            <p class="text-xs text-gray-400 leading-relaxed">All eight original motion clips ("Rahein Teri", "Ruposh", "Jhol", "Jaavedaan Hai" &amp; more) with theater dimming.</p>
+          </button>
+
+          <button type="button" data-room-jump="letter" class="glass-card p-6 rounded-2xl text-left space-y-2 group">
+            <div class="flex items-center justify-between font-mono-tech text-xs text-amber-200">
+              <span>WING 04 // LETTER</span>
+              <span class="group-hover:translate-x-1 transition-transform">→</span>
+            </div>
+            <div class="font-serif-display text-2xl italic text-white">For the girl who made ordinary days glow.</div>
+            <p class="text-xs text-gray-400 leading-relaxed">Break the wax seal, watch the typewriter write your letter, and open 6 "Open When..." envelopes.</p>
+          </button>
+
+          <button type="button" data-room-jump="museum" class="glass-card p-6 rounded-2xl text-left space-y-2 group">
+            <div class="flex items-center justify-between font-mono-tech text-xs text-amber-200">
+              <span>WING 05 // MUSEUM</span>
+              <span class="group-hover:translate-x-1 transition-transform">→</span>
+            </div>
+            <div class="font-serif-display text-2xl italic text-white">A private gallery for her.</div>
+            <p class="text-xs text-gray-400 leading-relaxed">All 26 frames curated like a fine-art exhibition. Tap any frame to flip and read its brass curator plaque.</p>
+          </button>
+
+          <button type="button" data-room-jump="play" class="glass-card p-6 rounded-2xl text-left space-y-2 group border-amber-400/30">
+            <div class="flex items-center justify-between font-mono-tech text-xs text-amber-200">
+              <span>WING 06 // SPARKS &amp; PLAY ✨</span>
+              <span class="group-hover:translate-x-1 transition-transform">→</span>
+            </div>
+            <div class="font-serif-display text-2xl italic text-white">Interactive games &amp; surprises.</div>
+            <p class="text-xs text-gray-400 leading-relaxed">Play the Akku Memory Match game, scratch the brushed-gold foil card, and pull notes from the Starlight Jar.</p>
+          </button>
+
+          <button type="button" data-room-jump="forever" class="glass-card p-6 rounded-2xl text-left space-y-2 group">
+            <div class="flex items-center justify-between font-mono-tech text-xs text-amber-200">
+              <span>WING 07 // FOREVER</span>
+              <span class="group-hover:translate-x-1 transition-transform">→</span>
+            </div>
+            <div class="font-serif-display text-2xl italic text-white">Some memories do not need permission.</div>
+            <p class="text-xs text-gray-400 leading-relaxed">Five core reflections, a Time Capsule wish wall for Akku to write back, and a sky full of stars.</p>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- ROOM 02: MEMORIES (26 PHOTOGRAPHS + POLAROID FLIP & 3D JUMP)        -->
+    <!-- =================================================================== -->
+    <section id="room-memories" class="room-section space-y-8 pointer-events-auto">
+      <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4 pb-4 border-b border-white/10 glass-card p-6 rounded-3xl">
+        <div>
+          <span class="font-mono-tech text-xs uppercase tracking-widest text-amber-200">ROOM 02 // 26 FRAMED PHOTOGRAPHS</span>
+          <h2 class="font-serif-display text-4xl sm:text-5xl italic text-white mt-1">A wall for the little things.</h2>
+          <p class="text-sm sm:text-base text-gray-300 mt-2 max-w-2xl">
+            Twenty-six original frames. Tap any photograph to inspect full-screen, flip Polaroids over, or click <strong>"🕶️ Pure 3D View"</strong> in the top bar to walk directly through the 3D marble gallery.
+          </p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <button type="button" data-mem-filter="all" class="mem-filter-btn px-3.5 py-2 rounded-xl font-mono-tech text-xs uppercase bg-amber-500/25 text-amber-100 border border-amber-400/40">
+            All 26
+          </button>
+          <button type="button" data-mem-filter="first" class="mem-filter-btn px-3.5 py-2 rounded-xl font-mono-tech text-xs uppercase bg-white/5 text-gray-300 hover:text-white border border-white/10">
+            First Half (01–13)
+          </button>
+          <button type="button" data-mem-filter="second" class="mem-filter-btn px-3.5 py-2 rounded-xl font-mono-tech text-xs uppercase bg-white/5 text-gray-300 hover:text-white border border-white/10">
+            Second Half (14–26)
+          </button>
+          <button type="button" data-mem-filter="fav" class="mem-filter-btn px-3.5 py-2 rounded-xl font-mono-tech text-xs uppercase bg-white/5 text-amber-200 hover:text-white border border-white/10">
+            ♥ Favorites (<span id="favCountBadge">0</span>)
+          </button>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-between gap-3 glass-card p-3.5 rounded-2xl">
+        <div class="flex items-center gap-2">
+          <span class="font-mono-tech text-xs text-gray-400">View Mode:</span>
+          <button id="layoutGridBtn" type="button" class="px-3 py-1.5 rounded-lg font-mono-tech text-xs bg-amber-500/20 text-amber-100 border border-amber-400/30">
+            Gallery Grid
+          </button>
+          <button id="layoutPolaroidBtn" type="button" class="px-3 py-1.5 rounded-lg font-mono-tech text-xs bg-white/5 text-gray-300 hover:text-white">
+            Polaroid Flip Table
+          </button>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button id="shuffleMemoriesBtn" type="button" class="px-3 py-1.5 rounded-lg font-mono-tech text-xs bg-white/5 hover:bg-white/10 text-gray-200">
+            Shuffle Order 🔀
+          </button>
+          <button id="startSlideshowBtn" type="button" class="btn-gradient px-4 py-1.5 rounded-lg font-mono-tech text-xs uppercase">
+            ▶ Auto Slideshow
+          </button>
+        </div>
+      </div>
+
+      <div id="memoriesGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5"></div>
+
+      <div class="flex flex-wrap items-center justify-between gap-4 pt-6 border-t border-white/10">
+        <button type="button" data-room-jump="home" class="glass-card px-5 py-3 rounded-xl font-mono-tech text-xs uppercase tracking-wider text-gray-300 hover:text-white">
+          ← Back to Home
+        </button>
+        <button type="button" data-room-jump="cinema" class="btn-gradient px-6 py-3 rounded-xl font-mono-tech text-xs uppercase tracking-wider">
+          Next Room · Cinema →
+        </button>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- ROOM 03: CINEMA (PRIVATE SCREENING ROOM + ALL 8 ORIGINAL CLIPS)     -->
+    <!-- =================================================================== -->
+    <section id="room-cinema" class="room-section space-y-8 pointer-events-auto">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-4 border-b border-white/10 glass-card p-6 rounded-3xl cinema-stage-elevated">
+        <div>
+          <span class="font-mono-tech text-xs uppercase tracking-widest text-amber-200">ROOM 03 // PRIVATE SCREENING ROOM</span>
+          <h2 class="font-serif-display text-4xl sm:text-5xl italic text-white mt-1">A few seconds that move.</h2>
+          <p class="text-sm sm:text-base text-gray-300 mt-2 max-w-2xl">
+            No autoplay tricks. Press play when you are ready. <span class="text-amber-200 italic">"Jaavedaan Hai"</span> automatically pauses while a film is playing, then gently continues when the film is done.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-2.5">
+          <button id="theaterDimBtn" type="button" class="glass-card px-4 py-2.5 rounded-xl font-mono-tech text-xs uppercase tracking-wider text-amber-200 border border-amber-400/30 flex items-center gap-2">
+            <span>💡</span>
+            <span id="theaterDimLabel">Dim Theater Lights</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Two Primary Motion Films Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 cinema-stage-elevated">
+        <!-- MOTION / 01 -->
+        <div class="glass-card rounded-3xl p-5 sm:p-6 space-y-4 border border-white/15">
+          <div class="flex items-center justify-between">
+            <span class="font-mono-tech text-xs uppercase tracking-widest text-amber-200">MOTION // 01</span>
+            <span id="video1ClipBadge" class="px-2.5 py-1 rounded-full bg-amber-500/15 text-amber-100 font-mono-tech text-[11px]">"RAHEIN TERI"</span>
+          </div>
+
+          <div class="relative aspect-[9/16] max-h-[520px] mx-auto w-full rounded-2xl overflow-hidden bg-black border border-white/10 flex items-center justify-center">
             <video
-              id="mainCinemaPlayer"
-              controls
+              id="cinemaVideo1"
+              class="w-full h-full object-contain"
               playsinline
-              preload="none"
+              preload="metadata"
               poster="./assets/v02.webp"
               src="./assets/v02.mp4"
-              class="w-full h-full object-contain"
             ></video>
           </div>
 
-          <!-- 8-Clip Reel Selector -->
-          <div class="md:col-span-6 space-y-4">
-            <p class="font-serif-display text-2xl italic text-pink-100 leading-snug">
-              “Some memories sound better in motion. Watch one, smile, replay it, and let the ordinary bits become the ones you remember most.”
-            </p>
-            <p class="text-xs text-pink-100/70">
-              Tap any of our 8 clips below — the background soundtrack automatically pauses while you watch and gently resumes when you finish.
-            </p>
+          <div class="space-y-2 pt-2">
+            <input id="videoSeek1" type="range" min="0" max="100" value="0" step="0.1" class="w-full accent-amber-400 cursor-pointer h-1.5 bg-white/15 rounded-lg" aria-label="Seek Film 01" />
+            <div class="flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2">
+                <button id="videoPlayBtn1" type="button" class="btn-gradient px-4 py-2 rounded-xl font-mono-tech text-xs uppercase">
+                  ▶ Play Film 01
+                </button>
+                <button id="videoMuteBtn1" type="button" class="glass-card px-3 py-2 rounded-xl font-mono-tech text-xs text-gray-200">
+                  🔊 Sound On
+                </button>
+              </div>
+              <button id="videoFullBtn1" type="button" class="glass-card px-3 py-2 rounded-xl font-mono-tech text-xs text-gray-300 hover:text-white">
+                ⛶ Fullscreen
+              </button>
+            </div>
+          </div>
 
-            <div id="reelButtonsGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1"></div>
+          <!-- Switcher for all 8 clips from the uploaded archive on Deck 1 -->
+          <div class="pt-2 border-t border-white/10">
+            <span class="font-mono-tech text-[10px] uppercase tracking-wider text-gray-400 block mb-2">Load From Archive (All 8 Clips):</span>
+            <div class="flex flex-wrap gap-1.5">
+              <button type="button" data-clip-deck="1" data-clip-file="v02.mp4" data-clip-title="RAHEIN TERI" class="clip-select-btn px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-100 font-mono-tech text-[10px]">01 · Rahein Teri</button>
+              <button type="button" data-clip-deck="1" data-clip-file="clip04.mp4" data-clip-title="JHOL · MAANU" class="clip-select-btn px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/15 text-gray-300 font-mono-tech text-[10px]">02 · Jhol</button>
+              <button type="button" data-clip-deck="1" data-clip-file="clip08.mp4" data-clip-title="JAAVEDAAN HAI" class="clip-select-btn px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/15 text-gray-300 font-mono-tech text-[10px]">03 · Jaavedaan Hai</button>
+              <button type="button" data-clip-deck="1" data-clip-file="clip06.mp4" data-clip-title="QUIET SMILE" class="clip-select-btn px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/15 text-gray-300 font-mono-tech text-[10px]">04 · Quiet Smile</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- MOTION / 02 -->
+        <div class="glass-card rounded-3xl p-5 sm:p-6 space-y-4 border border-white/15">
+          <div class="flex items-center justify-between">
+            <span class="font-mono-tech text-xs uppercase tracking-widest text-amber-200">MOTION // 02</span>
+            <span id="video2ClipBadge" class="px-2.5 py-1 rounded-full bg-amber-500/15 text-amber-100 font-mono-tech text-[11px]">"RUPOSH · WAJHI FAROOKI"</span>
+          </div>
+
+          <div class="relative aspect-[9/16] max-h-[520px] mx-auto w-full rounded-2xl overflow-hidden bg-black border border-white/10 flex items-center justify-center">
+            <video
+              id="cinemaVideo2"
+              class="w-full h-full object-contain"
+              playsinline
+              preload="metadata"
+              poster="./assets/v03.webp"
+              src="./assets/v03.mp4"
+            ></video>
+          </div>
+
+          <div class="space-y-2 pt-2">
+            <input id="videoSeek2" type="range" min="0" max="100" value="0" step="0.1" class="w-full accent-amber-400 cursor-pointer h-1.5 bg-white/15 rounded-lg" aria-label="Seek Film 02" />
+            <div class="flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2">
+                <button id="videoPlayBtn2" type="button" class="btn-gradient px-4 py-2 rounded-xl font-mono-tech text-xs uppercase">
+                  ▶ Play Film 02
+                </button>
+                <button id="videoMuteBtn2" type="button" class="glass-card px-3 py-2 rounded-xl font-mono-tech text-xs text-gray-200">
+                  🔊 Sound On
+                </button>
+              </div>
+              <button id="videoFullBtn2" type="button" class="glass-card px-3 py-2 rounded-xl font-mono-tech text-xs text-gray-300 hover:text-white">
+                ⛶ Fullscreen
+              </button>
+            </div>
+          </div>
+
+          <!-- Switcher for the other 4 clips on Deck 2 -->
+          <div class="pt-2 border-t border-white/10">
+            <span class="font-mono-tech text-[10px] uppercase tracking-wider text-gray-400 block mb-2">Load From Archive (All 8 Clips):</span>
+            <div class="flex flex-wrap gap-1.5">
+              <button type="button" data-clip-deck="2" data-clip-file="v03.mp4" data-clip-title="RUPOSH · WAJHI FAROOKI" class="clip-select-btn px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-100 font-mono-tech text-[10px]">05 · Ruposh</button>
+              <button type="button" data-clip-deck="2" data-clip-file="clip02.mp4" data-clip-title="IN MY WALLET" class="clip-select-btn px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/15 text-gray-300 font-mono-tech text-[10px]">06 · In My Wallet</button>
+              <button type="button" data-clip-deck="2" data-clip-file="clip03.mp4" data-clip-title="LOOKING AT THE..." class="clip-select-btn px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/15 text-gray-300 font-mono-tech text-[10px]">07 · Looking At The</button>
+              <button type="button" data-clip-deck="2" data-clip-file="clip07.mp4" data-clip-title="YOU WILL BE MY GIRL" class="clip-select-btn px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/15 text-gray-300 font-mono-tech text-[10px]">08 · You Will Be My Girl</button>
+            </div>
           </div>
         </div>
       </div>
-    </section>
 
-  <!-- CHAPTER 04: THE LOVE LETTER & SANCTUARY (73% - 88%) -->
-    <section id="chapter-letter" class="min-h-[140vh] flex items-center justify-center px-4 sm:px-8 py-20">
-      <div class="max-w-3xl w-full glass-panel rounded-[2.25rem] p-7 sm:p-12 pointer-events-auto space-y-7">
-        <div class="border-b border-white/10 pb-5">
-          <span class="font-mono-tech text-[10px] uppercase tracking-widest text-pink-300">CHAPTER 04 · THE LETTER</span>
-          <h2 class="font-serif-display text-4xl sm:text-5xl italic text-white mt-1">For the girl who made ordinary days glow.</h2>
-        </div>
-
-        <blockquote class="font-serif-display text-2xl sm:text-3xl italic text-pink-200 border-l-2 border-pink-400 pl-4 py-1">
-          “The little minutes became the memories. Somehow, that was the whole point.”
-        </blockquote>
-
-        <p class="text-sm sm:text-base text-pink-50/90 leading-relaxed font-light">
-          I could have sent you a paragraph. Instead, I made a universe you can scroll through whenever you need a quiet reminder that someone cared enough to build this for you. You do not have to do anything with these — just keep them as tiny reminders that there was softness here. The jokes. The silence. The random conversations. The days that looked ordinary until they became impossible to forget.
+      <div class="glass-card rounded-2xl p-6 text-center max-w-3xl mx-auto cinema-stage-elevated">
+        <p class="font-serif-display text-2xl italic text-amber-100">
+          “Some memories sound better in motion. Let the ordinary bits become the ones you remember most.”
         </p>
+      </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-          <div class="p-4 rounded-2xl bg-white/[0.04] border border-white/10">
-            <span class="font-mono-tech text-[10px] text-pink-300 block mb-1">01 · THE LAUGHS</span>
-            <p class="text-xs sm:text-sm text-pink-50/90">The jokes that made absolutely no sense. And somehow became the funniest things in the world.</p>
-          </div>
-          <div class="p-4 rounded-2xl bg-white/[0.04] border border-white/10">
-            <span class="font-mono-tech text-[10px] text-pink-300 block mb-1">02 · THE DETAILS</span>
-            <p class="text-xs sm:text-sm text-pink-50/90">The tiny moments that nobody else noticed. The ones that made a normal day feel different.</p>
-          </div>
-          <div class="p-4 rounded-2xl bg-white/[0.04] border border-white/10">
-            <span class="font-mono-tech text-[10px] text-pink-300 block mb-1">03 · SHOWING UP</span>
-            <p class="text-xs sm:text-sm text-pink-50/90">Listening properly. Being gentle. Showing up. Not dramatically. Just consistently.</p>
-          </div>
-          <div class="p-4 rounded-2xl bg-white/[0.04] border border-white/10">
-            <span class="font-mono-tech text-[10px] text-pink-300 block mb-1">04 · YOUR HEART</span>
-            <p class="text-xs sm:text-sm text-pink-50/90">Learning the shape of another person's heart. Slowly. Carefully. Imperfectly.</p>
-          </div>
-        </div>
-
-        <!-- Interactive "Open When..." Envelopes -->
-        <div class="pt-4 border-t border-white/10 space-y-3">
-          <span class="font-mono-tech text-[10px] uppercase tracking-widest text-pink-300 block">TAP AN ENVELOPE WHENEVER YOU NEED IT</span>
-          <div id="openWhenContainer" class="flex flex-wrap gap-2"></div>
-          <div id="openWhenDisplay" class="p-4 rounded-2xl bg-pink-500/10 border border-pink-300/25 font-serif-display text-xl italic text-pink-100">
-            “Remember the jokes that made zero sense to anyone else on earth and still had us laughing until we couldn’t breathe? That version of you is my favorite thing in the universe.”
-          </div>
+      <div class="flex flex-wrap items-center justify-between gap-4 pt-6 border-t border-white/10 cinema-stage-elevated">
+        <button type="button" data-room-jump="memories" class="glass-card px-5 py-3 rounded-xl font-mono-tech text-xs uppercase tracking-wider text-gray-300 hover:text-white">
+          ← Back to Memories
+        </button>
+        <div class="flex items-center gap-3">
+          <button type="button" data-room-jump="museum" class="glass-card px-5 py-3 rounded-xl font-mono-tech text-xs uppercase tracking-wider text-gray-300 hover:text-white">
+            Skip to Museum →
+          </button>
+          <button type="button" data-room-jump="letter" class="btn-gradient px-6 py-3 rounded-xl font-mono-tech text-xs uppercase tracking-wider">
+            Next · The Letter →
+          </button>
         </div>
       </div>
     </section>
 
-  <!-- CHAPTER 05: FOREVER & FINALE (88% - 100%) -->
-    <section id="chapter-forever" class="min-h-[115vh] flex items-center justify-center px-4 sm:px-8 py-20">
-      <div class="max-w-3xl w-full glass-panel rounded-[2.5rem] p-8 sm:p-12 text-center pointer-events-auto space-y-7">
-        <div class="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-pink-500/15 border border-pink-300/30 font-mono-tech text-[10px] uppercase tracking-widest text-pink-200">
-          <span>CHAPTER 05 · FOREVER</span>
+    <!-- =================================================================== -->
+    <!-- ROOM 04: LETTER (WAX-SEALED LETTER & "OPEN WHEN..." ENVELOPES)      -->
+    <!-- =================================================================== -->
+    <section id="room-letter" class="room-section space-y-10 pointer-events-auto">
+      <div class="pb-4 border-b border-white/10 glass-card p-6 rounded-3xl">
+        <span class="font-mono-tech text-xs uppercase tracking-widest text-amber-200">ROOM 04 // THE LETTER</span>
+        <h2 class="font-serif-display text-4xl sm:text-5xl italic text-white mt-1">For the girl who made ordinary days glow.</h2>
+        <p class="text-sm sm:text-base text-gray-300 mt-2 max-w-2xl">
+          I could have sent you a paragraph. Instead, I made a room you can enter whenever you need a little reminder that someone cared enough to make this.
+        </p>
+      </div>
+
+      <div id="letterEnvelopeGate" class="glass-card rounded-3xl p-8 sm:p-12 text-center max-w-2xl mx-auto space-y-6 border border-amber-400/30 relative overflow-hidden">
+        <p class="font-mono-tech text-xs uppercase tracking-widest text-amber-200">SEALED FOR AKKÚ</p>
+        <h3 class="font-serif-display text-3xl sm:text-4xl italic text-white">Tap the wax seal to unfold your letter</h3>
+        <div class="py-4 flex justify-center">
+          <button id="breakSealBtn" type="button" class="wax-seal-btn w-24 h-24 rounded-full bg-gradient-to-br from-amber-600 via-amber-700 to-stone-900 border-4 border-amber-200/40 flex flex-col items-center justify-center text-white shadow-2xl cursor-pointer">
+            <span class="font-serif-display text-2xl font-bold tracking-wider">AKKÚ</span>
+            <span class="font-mono-tech text-[9px] uppercase tracking-widest mt-0.5">OPEN ♥</span>
+          </button>
+        </div>
+        <p class="text-xs text-gray-400">Includes typewriter reading mode &amp; five keepsake notes</p>
+      </div>
+
+      <div id="letterUnfoldedContent" class="hidden space-y-10">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <div class="lg:col-span-7 glass-card rounded-3xl p-6 sm:p-10 space-y-6 border border-white/15">
+            <div class="flex flex-wrap items-center justify-between gap-2 pb-4 border-b border-white/10">
+              <span class="font-mono-tech text-xs text-amber-200">PERSONAL ARCHIVE // LETTER 01</span>
+              <button id="typewriterToggleBtn" type="button" class="px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 font-mono-tech text-xs text-amber-200 transition">
+                ⌨ Replay Typewriter Effect
+              </button>
+            </div>
+
+            <blockquote class="font-serif-display text-2xl sm:text-3xl italic text-amber-100 border-l-2 border-amber-400 pl-4 py-1">
+              “The little minutes became the memories. Somehow, that was the whole point.”
+            </blockquote>
+
+            <p id="letterMainParagraph" class="text-base sm:text-lg text-gray-200 leading-relaxed">
+              You do not have to do anything with these. Just keep them as tiny reminders that there was softness here. The jokes. The silence. The random conversations. The days that looked ordinary until they became impossible to forget.
+            </p>
+
+            <div class="space-y-3 pt-2">
+              <div class="p-4 rounded-2xl bg-white/[0.04] border border-white/10">
+                <div class="font-mono-tech text-xs text-amber-200 mb-1">01 · ABSURD JOY</div>
+                <p class="text-sm text-gray-200">The jokes that made absolutely no sense. And somehow became the funniest things in the world.</p>
+              </div>
+              <div class="p-4 rounded-2xl bg-white/[0.04] border border-white/10">
+                <div class="font-mono-tech text-xs text-amber-200 mb-1">02 · QUIET DETAILS</div>
+                <p class="text-sm text-gray-200">The tiny moments that nobody else noticed. The ones that made a normal day feel different.</p>
+              </div>
+              <div class="p-4 rounded-2xl bg-white/[0.04] border border-white/10">
+                <div class="font-mono-tech text-xs text-amber-200 mb-1">03 · CONSISTENCY</div>
+                <p class="text-sm text-gray-200">Listening properly. Being gentle. Showing up. Not dramatically. Just consistently.</p>
+              </div>
+              <div class="p-4 rounded-2xl bg-white/[0.04] border border-white/10">
+                <div class="font-mono-tech text-xs text-amber-200 mb-1">04 · PATIENCE</div>
+                <p class="text-sm text-gray-200">Learning the shape of another person's heart. Slowly. Carefully. Imperfectly.</p>
+              </div>
+              <div class="p-4 rounded-2xl bg-white/[0.04] border border-white/10">
+                <div class="font-mono-tech text-xs text-amber-200 mb-1">05 · SANCTUARY</div>
+                <p class="text-sm text-gray-200">This isn't a performance. It is just a place to breathe, smile, and remember that someone cared enough to build it.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="lg:col-span-5 space-y-6">
+            <div class="glass-card rounded-3xl p-4 border border-white/15">
+              <div class="relative aspect-[4/5] rounded-2xl overflow-hidden">
+                <img id="letterPortraitImg" src="./assets/p10.jpg" alt="Akku portrait" class="w-full h-full object-cover" />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+                <div class="absolute bottom-4 left-4 right-4 flex items-center justify-between">
+                  <div>
+                    <span class="font-mono-tech text-[11px] uppercase tracking-widest text-amber-200 block">FOR YOU · ALWAYS</span>
+                    <span class="font-serif-display text-2xl italic text-white">The face behind the feeling</span>
+                  </div>
+                  <button id="letterSendHeartBtn" type="button" class="w-11 h-11 rounded-full bg-amber-500/30 hover:bg-amber-500/50 border border-amber-300/40 flex items-center justify-center text-lg transition" title="Send a burst of warmth">
+                    ♥
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="glass-card rounded-3xl p-6 space-y-4">
+              <div>
+                <span class="font-mono-tech text-xs uppercase tracking-widest text-amber-200">SIX SECRET ENVELOPES</span>
+                <h3 class="font-serif-display text-2xl italic text-white mt-0.5">“Open When…” Capsules</h3>
+                <p class="text-xs text-gray-400">Tap any envelope below whenever you need that exact reminder.</p>
+              </div>
+
+              <div id="openWhenGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-between gap-4 pt-6 border-t border-white/10">
+        <button type="button" data-room-jump="cinema" class="glass-card px-5 py-3 rounded-xl font-mono-tech text-xs uppercase tracking-wider text-gray-300 hover:text-white">
+          ← Back to Cinema
+        </button>
+        <button type="button" data-room-jump="museum" class="btn-gradient px-6 py-3 rounded-xl font-mono-tech text-xs uppercase tracking-wider">
+          Open The Museum →
+        </button>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- ROOM 05: MUSEUM (CURATED EXHIBITION WITH 3D FLIP PLAQUES)           -->
+    <!-- =================================================================== -->
+    <section id="room-museum" class="room-section space-y-8 pointer-events-auto">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-4 border-b border-white/10 glass-card p-6 rounded-3xl">
+        <div>
+          <span class="font-mono-tech text-xs uppercase tracking-widest text-amber-200">ROOM 05 // PRIVATE EXHIBITION</span>
+          <h2 class="font-serif-display text-4xl sm:text-5xl italic text-white mt-1">A wall for her.</h2>
+          <p class="text-sm sm:text-base text-gray-300 mt-2 max-w-2xl">
+            Twenty-six frames arranged like a private gallery. Tap <strong class="text-amber-200">"Flip Plaque ↻"</strong> on any frame to read its curator note, or tap <strong class="text-amber-200">"Expand ⤢"</strong> to inspect full-screen.
+          </p>
         </div>
 
-        <h2 class="font-serif-display text-4xl sm:text-6xl italic text-white leading-tight">
+        <div class="flex items-center gap-2">
+          <button id="flipAllMuseumBtn" type="button" class="glass-card px-4 py-2.5 rounded-xl font-mono-tech text-xs uppercase tracking-wider text-amber-200">
+            Flip All Plaques ↻
+          </button>
+        </div>
+      </div>
+
+      <div id="museumGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
+      <div class="flex flex-wrap items-center justify-between gap-4 pt-6 border-t border-white/10">
+        <button type="button" data-room-jump="memories" class="glass-card px-5 py-3 rounded-xl font-mono-tech text-xs uppercase tracking-wider text-gray-300 hover:text-white">
+          ← Back to Memories
+        </button>
+        <div class="flex items-center gap-3">
+          <button type="button" data-room-jump="play" class="btn-gradient px-6 py-3 rounded-xl font-mono-tech text-xs uppercase tracking-wider">
+            Next · Sparks &amp; Games ✨ →
+          </button>
+          <button type="button" data-room-jump="forever" class="glass-card px-5 py-3 rounded-xl font-mono-tech text-xs uppercase tracking-wider text-gray-200">
+            Final Room · Forever →
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- ROOM 06: SPARKS & PLAY (3 INTERACTIVE MINI-EXPERIENCES FOR AKKÚ)     -->
+    <!-- =================================================================== -->
+    <section id="room-play" class="room-section space-y-10 pointer-events-auto">
+      <div class="pb-4 border-b border-white/10 glass-card p-6 rounded-3xl">
+        <span class="font-mono-tech text-xs uppercase tracking-widest text-amber-200">ROOM 06 // INTERACTIVE PLAYGROUND</span>
+        <h2 class="font-serif-display text-4xl sm:text-5xl italic text-white mt-1">Little sparks to play with.</h2>
+        <p class="text-sm sm:text-base text-gray-300 mt-2 max-w-2xl">
+          Match our favorite frames, scratch off the brushed-gold foil card, or pull a note from the Starlight Jar whenever you want a reminder.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div class="lg:col-span-7 glass-card rounded-3xl p-6 sm:p-8 space-y-5 border border-white/15">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <span class="font-mono-tech text-xs text-amber-200 uppercase">MINI-GAME 01 // MEMORY LATTICE</span>
+              <h3 class="font-serif-display text-2xl sm:text-3xl italic text-white">Match Our Moments</h3>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="font-mono-tech text-xs text-gray-300">Moves: <strong id="gameMovesCount" class="text-amber-200">0</strong></span>
+              <span class="font-mono-tech text-xs text-gray-300">Pairs: <strong id="gamePairsCount" class="text-emerald-300">0 / 6</strong></span>
+              <button id="resetMemoryGameBtn" type="button" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 font-mono-tech text-xs text-white transition">
+                New Deck ↻
+              </button>
+            </div>
+          </div>
+
+          <p class="text-xs text-gray-400">Flip two cards at a time to pair up 6 random photographs from our 26 frames.</p>
+
+          <div id="memoryGameBoard" class="grid grid-cols-3 sm:grid-cols-4 gap-3"></div>
+
+          <div id="memoryGameWinBanner" class="hidden p-4 rounded-2xl bg-amber-500/20 border border-amber-400/40 text-center space-y-2">
+            <div class="font-serif-display text-2xl italic text-white">✦ You matched every memory! ✦</div>
+            <p class="text-xs text-amber-100">“Some pictures feel like proof that a moment happened exactly the way you remember it.”</p>
+          </div>
+        </div>
+
+        <div class="lg:col-span-5 space-y-6">
+          <div class="glass-card rounded-3xl p-6 space-y-4 border border-white/15">
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="font-mono-tech text-xs text-amber-200 uppercase">INTERACTIVE 02 // FOIL REVEAL</span>
+                <h3 class="font-serif-display text-2xl italic text-white">Scratch for a Hidden Note</h3>
+              </div>
+              <button id="resetScratchBtn" type="button" class="px-3 py-1 rounded-lg bg-white/10 hover:bg-white/15 font-mono-tech text-xs text-gray-200">
+                Reset Foil ↻
+              </button>
+            </div>
+
+            <p class="text-xs text-gray-400">Rub your finger or cursor across the brushed-gold foil below to uncover the hidden frame.</p>
+
+            <div class="relative w-full h-56 rounded-2xl overflow-hidden border border-white/15 select-none">
+              <div id="scratchPrizeBg" class="absolute inset-0 flex flex-col justify-end p-5 bg-cover bg-center" style="background-image: linear-gradient(to top, rgba(9,8,15,0.92), rgba(9,8,15,0.25)), url('./assets/p25.jpg');">
+                <span class="font-mono-tech text-[10px] uppercase tracking-widest text-amber-200">FRAME 25 // SAVED FOR FOREVER</span>
+                <p class="font-serif-display text-xl italic text-white mt-0.5">“I was so wrong not to doubt your Medellin, tangerine dreams”</p>
+                <p class="text-xs text-gray-300 mt-1">You found the hidden tangerine dream underneath the stars ♥</p>
+              </div>
+              <canvas id="scratchCanvas" class="absolute inset-0 w-full h-full cursor-crosshair touch-none"></canvas>
+            </div>
+          </div>
+
+          <div class="glass-card rounded-3xl p-6 space-y-4 border border-white/15">
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="font-mono-tech text-xs text-amber-200 uppercase">INTERACTIVE 03 // ∞ REASONS</span>
+                <h3 class="font-serif-display text-2xl italic text-white">The Starlight Jar</h3>
+              </div>
+              <span id="jarCounterBadge" class="font-mono-tech text-xs text-amber-200">Note #01</span>
+            </div>
+
+            <div class="p-5 rounded-2xl bg-white/[0.04] border border-amber-400/20 min-h-[110px] flex flex-col justify-center">
+              <p id="jarReasonText" class="font-serif-display text-xl sm:text-2xl italic text-white leading-snug">
+                “Because even the quietest five minutes with you feel warmer than a whole crowded room.”
+              </p>
+            </div>
+
+            <button id="pullJarReasonBtn" type="button" class="btn-gradient w-full py-3 rounded-xl font-mono-tech text-xs uppercase tracking-wider">
+              ✨ Pull Another Starlight Note
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-between gap-4 pt-6 border-t border-white/10">
+        <button type="button" data-room-jump="museum" class="glass-card px-5 py-3 rounded-xl font-mono-tech text-xs uppercase tracking-wider text-gray-300 hover:text-white">
+          ← Back to Museum
+        </button>
+        <button type="button" data-room-jump="forever" class="btn-gradient px-6 py-3 rounded-xl font-mono-tech text-xs uppercase tracking-wider">
+          Enter The Last Room · Forever →
+        </button>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- ROOM 07: FOREVER (CORE REFLECTIONS & TIME CAPSULE WISH WALL)        -->
+    <!-- =================================================================== -->
+    <section id="room-forever" class="room-section space-y-12 pointer-events-auto">
+      <div class="pb-4 border-b border-white/10 glass-card p-6 rounded-3xl">
+        <span class="font-mono-tech text-xs uppercase tracking-widest text-amber-200">ROOM 07 // FOREVER</span>
+        <h2 class="font-serif-display text-4xl sm:text-5xl italic text-white mt-1">Some memories do not need permission to stay.</h2>
+        <p class="text-sm sm:text-base text-gray-300 mt-2 max-w-2xl">
+          This is not a promise about the future. It is a place to keep what was real: the late-night conversations, the photographs, the laughter, the quiet, and the feeling of being understood.
+        </p>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-3">
+        <span class="px-4 py-2 rounded-full glass-card font-serif-display text-lg italic text-amber-100">“Keep the ordinary details.”</span>
+        <span class="px-4 py-2 rounded-full glass-card font-serif-display text-lg italic text-stone-200">“Remember how it felt, not just how it looked.”</span>
+        <span class="px-4 py-2 rounded-full glass-card font-serif-display text-lg italic text-amber-100">“Let the good parts stay good.”</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div class="glass-card p-6 rounded-3xl space-y-3 border border-white/15">
+          <span class="font-mono-tech text-xs text-amber-200">MEMORY 01</span>
+          <h3 class="font-serif-display text-2xl italic text-white">The little things</h3>
+          <p class="text-sm text-gray-300 leading-relaxed">
+            “The jokes that made no sense, the random check-ins, the quiet comfort of knowing someone was there.”
+          </p>
+        </div>
+
+        <div class="glass-card p-6 rounded-3xl space-y-3 border border-white/15">
+          <span class="font-mono-tech text-xs text-amber-200">MEMORY 02</span>
+          <h3 class="font-serif-display text-2xl italic text-white">The photographs</h3>
+          <p class="text-sm text-gray-300 leading-relaxed">
+            “Some pictures feel like proof that a moment happened exactly the way you remember it.”
+          </p>
+        </div>
+
+        <div class="glass-card p-6 rounded-3xl space-y-3 border border-white/15">
+          <span class="font-mono-tech text-xs text-amber-200">MEMORY 03</span>
+          <h3 class="font-serif-display text-2xl italic text-white">The late nights</h3>
+          <p class="text-sm text-gray-300 leading-relaxed">
+            “The conversations that wandered everywhere and nowhere, and somehow made the night smaller.”
+          </p>
+        </div>
+
+        <div class="glass-card p-6 rounded-3xl space-y-3 border border-white/15">
+          <span class="font-mono-tech text-xs text-amber-200">MEMORY 04</span>
+          <h3 class="font-serif-display text-2xl italic text-white">The ordinary magic</h3>
+          <p class="text-sm text-gray-300 leading-relaxed">
+            “No grand explanation. Just two people making ordinary minutes feel lighter than they had any right to be.”
+          </p>
+        </div>
+
+        <div class="glass-card p-6 rounded-3xl space-y-3 border border-white/15 md:col-span-2 lg:col-span-2">
+          <span class="font-mono-tech text-xs text-amber-200">MEMORY 05</span>
+          <h3 class="font-serif-display text-2xl italic text-white">The part that stays</h3>
+          <p class="text-sm text-gray-300 leading-relaxed">
+            “Some memories do not ask permission. They simply become part of the map of you.”
+          </p>
+        </div>
+      </div>
+
+      <div class="glass-card rounded-3xl p-6 sm:p-8 border border-amber-400/25 space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <span class="font-mono-tech text-xs uppercase tracking-widest text-amber-200">INTERACTIVE TIME CAPSULE</span>
+            <h3 class="font-serif-display text-3xl italic text-white">Leave a note inside this universe</h3>
+            <p class="text-xs text-gray-400 mt-1">Write a thought, a favorite memory, or a reply — it saves right in your browser and you can copy it to send back.</p>
+          </div>
+        </div>
+
+        <form id="capsuleForm" class="space-y-3">
+          <textarea
+            id="capsuleNoteInput"
+            rows="3"
+            placeholder="Write a little note, a memory, or a wish to keep in this universe..."
+            class="w-full rounded-2xl bg-black/50 border border-white/15 p-4 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-amber-400"
+          ></textarea>
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <button type="submit" class="btn-gradient px-6 py-2.5 rounded-xl font-mono-tech text-xs uppercase tracking-wider">
+              Save Note to Universe ✦
+            </button>
+            <button id="copyAllCapsuleBtn" type="button" class="glass-card px-4 py-2.5 rounded-xl font-mono-tech text-xs text-amber-200 hover:text-white">
+              📋 Copy My Notes to Send Back
+            </button>
+          </div>
+        </form>
+
+        <div id="capsuleNotesList" class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2"></div>
+      </div>
+
+      <div class="glass-card rounded-3xl p-8 sm:p-12 text-center space-y-6 border border-white/15 relative overflow-hidden">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-500/15 border border-amber-400/30 font-mono-tech text-[11px] text-amber-200">
+          <span>ARCHIVE CORE // COMPLETE</span>
+          <span>•</span>
+          <span>THE LAST DOOR IS ANOTHER BEGINNING</span>
+        </div>
+
+        <h2 class="font-serif-display text-4xl sm:text-6xl italic text-white">
           Thank you for being real with me.
         </h2>
 
-        <p class="text-sm sm:text-base text-pink-100/80 max-w-xl mx-auto font-light">
-          Some memories do not ask permission. They simply become part of the map of you. A normal paragraph felt too small — so I built a little universe instead.
+        <p class="text-base sm:text-lg text-gray-300 max-w-xl mx-auto">
+          A normal paragraph felt too small. So I built a little universe instead.
         </p>
 
-        <!-- Live Heartbeat & Time Counter -->
-        <div class="grid grid-cols-3 gap-3 max-w-lg mx-auto pt-2">
-          <div class="p-4 rounded-2xl bg-white/[0.04] border border-white/10">
-            <div id="statDays" class="font-serif-display text-2xl sm:text-4xl text-white">0</div>
-            <div class="font-mono-tech text-[9px] uppercase tracking-widest text-pink-200/70 mt-1">Days of Warmth</div>
-          </div>
-          <div class="p-4 rounded-2xl bg-white/[0.04] border border-white/10">
-            <div id="statHours" class="font-serif-display text-2xl sm:text-4xl text-white">0</div>
-            <div class="font-mono-tech text-[9px] uppercase tracking-widest text-pink-200/70 mt-1">Hours Passed</div>
-          </div>
-          <div class="p-4 rounded-2xl bg-white/[0.04] border border-white/10">
-            <div id="statBeats" class="font-serif-display text-2xl sm:text-4xl text-pink-300">0</div>
-            <div class="font-mono-tech text-[9px] uppercase tracking-widest text-pink-300/90 mt-1">Heartbeats ♥</div>
-          </div>
-        </div>
-        <div id="statSince" class="font-mono-tech text-[10px] uppercase tracking-[0.3em] text-pink-200/60 pt-1">Since 24 June 2026</div>
-
-        <div class="flex flex-wrap items-center justify-center gap-3 pt-3">
-          <button id="sendHeartsBtn" type="button" class="px-7 py-3.5 rounded-full bg-gradient-to-r from-pink-300 via-rose-200 to-amber-100 text-zinc-950 font-medium text-xs font-mono-tech uppercase tracking-wider shadow-xl hover:brightness-105 active:scale-95 transition">
-            Send a sky full of hearts
+        <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+          <button id="finaleSkyShowerBtn" type="button" class="btn-gradient px-7 py-3.5 rounded-2xl font-mono-tech text-xs uppercase tracking-wider">
+            ✨ Send a Sky Full of Stars &amp; Hearts
           </button>
-          <a href="#chapter-overture" class="glass-pill px-6 py-3.5 rounded-full font-mono-tech text-xs uppercase tracking-wider text-pink-100 hover:text-white transition">
-            ↑ Scroll Back to Top
-          </a>
+          <button type="button" data-room-jump="home" class="glass-card px-6 py-3.5 rounded-2xl font-mono-tech text-xs uppercase tracking-wider text-white">
+            Back to the Beginning
+          </button>
+          <button type="button" data-room-jump="memories" class="glass-card px-6 py-3.5 rounded-2xl font-mono-tech text-xs uppercase tracking-wider text-amber-200">
+            Stay With The Photographs
+          </button>
         </div>
       </div>
     </section>
@@ -326,35 +985,152 @@
   </main>
 
   <!-- ===================================================================== -->
-  <!-- CLEAN FULL-SCREEN PHOTOGRAPH LIGHTBOX MODAL                           -->
+  <!-- PERSISTENT FLOATING VINYL SOUNDTRACK WIDGET (Bottom-Left)             -->
   <!-- ===================================================================== -->
-  <div id="photoModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/85 backdrop-blur-2xl" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="modalPhotoTitle" tabindex="-1">
-    <div class="glass-panel max-w-2xl w-full rounded-[2rem] p-5 sm:p-6 space-y-4">
+  <div class="fixed bottom-3 left-3 right-3 sm:right-auto z-40 flex items-center justify-between sm:justify-start gap-3 glass-card p-2 pr-3.5 rounded-2xl border border-white/15 shadow-2xl max-w-md">
+    <button id="musicToggleBtn" type="button" class="relative w-11 h-11 rounded-full bg-zinc-900 border-2 border-amber-400/50 flex items-center justify-center shrink-0 group overflow-hidden" aria-label="Play or pause Jaavedaan Hai">
+      <img id="vinylThumb" src="./assets/p01.jpg" alt="Vinyl label" class="w-full h-full object-cover opacity-65 vinyl-paused" />
+      <span class="absolute inset-0 bg-black/30 flex items-center justify-center text-white text-xs font-bold" id="musicPlayIcon">▶</span>
+    </button>
+
+    <div class="min-w-0 flex-1">
+      <div class="flex items-center gap-2">
+        <span class="font-serif-display text-base italic text-white truncate">“Jaavedaan Hai”</span>
+        <div id="eqBars" class="hidden items-end gap-0.5 h-3.5">
+          <span class="w-0.5 bg-amber-400 rounded-full eq-bar-1"></span>
+          <span class="w-0.5 bg-amber-400 rounded-full eq-bar-2"></span>
+          <span class="w-0.5 bg-amber-400 rounded-full eq-bar-3"></span>
+        </div>
+      </div>
+      <div id="musicStatusSub" class="font-mono-tech text-[9px] uppercase tracking-wider text-gray-400 truncate">
+        AKKÚ · CONTINUOUS SOUNDTRACK
+      </div>
+    </div>
+
+    <div class="flex items-center gap-1.5">
+      <input id="musicVolumeSlider" type="range" min="0" max="1" step="0.05" value="0.75" class="w-14 accent-amber-400 cursor-pointer hidden sm:block" aria-label="Music Volume" />
+      <button id="chimeSoundToggleBtn" type="button" class="px-2 py-1 rounded-xl bg-white/5 hover:bg-white/10 font-mono-tech text-[10px] text-amber-200" title="Toggle interactive chimes">
+        🔔 Chimes On
+      </button>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- CUSTOM MEDIA STUDIO MODAL                                             -->
+  <!-- ===================================================================== -->
+  <div id="customMediaModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/85 backdrop-blur-xl">
+    <div class="glass-card max-w-lg w-full rounded-3xl p-6 sm:p-8 border border-amber-400/35 shadow-2xl space-y-5">
       <div class="flex items-center justify-between">
         <div>
-          <span id="modalPhotoBadge" class="font-mono-tech text-[10px] uppercase tracking-widest text-pink-300">FRAME 01 / 26</span>
-          <h3 id="modalPhotoTitle" class="font-serif-display text-2xl sm:text-3xl italic text-white">01: The first little universe</h3>
+          <span class="font-mono-tech text-xs uppercase tracking-widest text-amber-200">LIVE 3D ASSET LOADER</span>
+          <h3 class="font-serif-display text-3xl italic text-white">Load Your Pics, Videos &amp; Music</h3>
         </div>
-        <button id="closeModalBtn" type="button" class="px-3 py-2 rounded-full bg-white/10 hover:bg-white/20 font-mono-tech text-xs text-white" aria-label="Close photograph">Close</button>
+        <button id="closeCustomMediaModalBtn" type="button" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 font-mono-tech text-xs text-white">✕ Close</button>
       </div>
 
-      <div class="relative h-[58vh] sm:h-[64vh] w-full rounded-2xl overflow-hidden bg-black/60 flex items-center justify-center">
-        <img id="modalPhotoImg" src="./assets/p01.jpg" alt="Memory photograph" class="max-w-full max-h-full object-contain" loading="lazy" decoding="async" />
+      <p class="text-xs sm:text-sm text-gray-300 leading-relaxed">
+        All 26 of your uploaded photographs, yourvideos, and soundtrack are already embedded and active! You can also test additional files anytime below:
+      </p>
+
+      <div class="space-y-3">
+        <label class="block p-4 rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] border border-dashed border-amber-400/40 cursor-pointer transition">
+          <span class="font-mono-tech text-xs uppercase text-amber-200 block">1. Upload Photos (Replaces 3D Frames 01–26)</span>
+          <span class="text-xs text-gray-400 block mt-0.5">Select 1 to 26 images (.jpg, .png, .webp)</span>
+          <input id="customPhotosInput" type="file" accept="image/*" multiple class="mt-2 text-xs text-gray-300 w-full" />
+        </label>
+
+        <label class="block p-4 rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] border border-dashed border-stone-400/40 cursor-pointer transition">
+          <span class="font-mono-tech text-xs uppercase text-stone-200 block">2. Upload Video Clips (Cinema Room 01 &amp; 02)</span>
+          <span class="text-xs text-gray-400 block mt-0.5">Select 1 or 2 video files (.mp4, .webm, .mov)</span>
+          <input id="customVideosInput" type="file" accept="video/*" multiple class="mt-2 text-xs text-gray-300 w-full" />
+        </label>
+
+        <label class="block p-4 rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] border border-dashed border-emerald-400/40 cursor-pointer transition">
+          <span class="font-mono-tech text-xs uppercase text-emerald-300 block">3. Upload Soundtrack Song (.mp3, .wav, .m4a)</span>
+          <span class="text-xs text-gray-400 block mt-0.5">Replaces the background universe song</span>
+          <input id="customAudioInput" type="file" accept="audio/*" class="mt-2 text-xs text-gray-300 w-full" />
+        </label>
       </div>
 
-      <div class="flex items-center justify-between gap-4 pt-1">
-        <p id="modalPhotoNote" class="text-xs sm:text-sm text-pink-100/80 italic flex-1"></p>
+      <div class="flex items-center justify-end gap-2 pt-2">
+        <button id="applyCustomMediaDoneBtn" type="button" class="btn-gradient px-6 py-2.5 rounded-xl font-mono-tech text-xs uppercase">
+          Done · View in 3D ✦
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- FULL-SCREEN PHOTOGRAPH LIGHTBOX MODAL                                 -->
+  <!-- ===================================================================== -->
+  <div id="lightboxModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/90 backdrop-blur-2xl">
+    <div class="max-w-4xl w-full glass-card rounded-3xl p-4 sm:p-6 border border-white/15 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between gap-2">
+        <div>
+          <span id="lightboxIndexBadge" class="font-mono-tech text-xs text-amber-200 uppercase">FRAME 01 / 26</span>
+          <h3 id="lightboxTitle" class="font-serif-display text-2xl sm:text-3xl italic text-white">01: The first little universe</h3>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="lightboxFavBtn" type="button" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/15 font-mono-tech text-xs text-amber-200">
+            ♡ Favorite
+          </button>
+          <button id="lightboxCloseBtn" type="button" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 font-mono-tech text-xs text-white">
+            ✕ Close
+          </button>
+        </div>
+      </div>
+
+      <div class="relative h-[55vh] sm:h-[62vh] w-full rounded-2xl overflow-hidden bg-black/70 flex items-center justify-center">
+        <img id="lightboxImg" src="./assets/p01.jpg" alt="Memory Fullscreen" class="max-w-full max-h-full object-contain transition-transform duration-300" />
+        <div id="lightboxLyricOverlay" class="hidden absolute bottom-4 left-4 right-4 p-3 rounded-xl bg-black/70 backdrop-blur-md text-center font-serif-display text-xl italic text-amber-200 border border-amber-300/30">
+          “I was so wrong not to doubt your Medellin, tangerine dreams”
+        </div>
+      </div>
+
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
+        <p id="lightboxSubNote" class="text-xs sm:text-sm text-gray-300 italic"></p>
         <div class="flex items-center gap-2 shrink-0">
-          <button id="prevModalBtn" type="button" class="px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 font-mono-tech text-xs text-white">Previous</button>
-          <button id="nextModalBtn" type="button" class="px-4 py-2 rounded-full bg-pink-300 text-zinc-950 font-mono-tech text-xs font-medium">Next</button>
+          <button id="lightboxPrevBtn" type="button" class="glass-card px-4 py-2 rounded-xl font-mono-tech text-xs text-white hover:border-amber-400">
+            ← Prev
+          </button>
+          <button id="lightboxSlideToggleBtn" type="button" class="glass-card px-4 py-2 rounded-xl font-mono-tech text-xs text-amber-200">
+            ▶ Auto Play
+          </button>
+          <button id="lightboxNextBtn" type="button" class="btn-gradient px-4 py-2 rounded-xl font-mono-tech text-xs">
+            Next →
+          </button>
         </div>
       </div>
     </div>
   </div>
 
   <!-- ===================================================================== -->
-  <!-- Scroll-driven interaction and WebGL gallery -->
+  <!-- CAPSULE / "OPEN WHEN..." / CONSTELLATION POPUP MODAL                  -->
   <!-- ===================================================================== -->
-    <script defer src="./app.js"></script>
+  <div id="capsuleModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-xl">
+    <div class="glass-card max-w-md w-full rounded-3xl p-6 sm:p-8 border border-amber-400/35 shadow-2xl space-y-5 text-center relative">
+      <span id="capsuleModalTag" class="font-mono-tech text-xs uppercase tracking-widest text-amber-200 block">MEMORY CAPSULE</span>
+      <h3 id="capsuleModalTitle" class="font-serif-display text-3xl italic text-white">A soft reminder</h3>
+      <div class="w-28 h-28 mx-auto rounded-2xl overflow-hidden border border-white/15">
+        <img id="capsuleModalImg" src="./assets/p04.jpg" alt="Capsule memory" class="w-full h-full object-cover" />
+      </div>
+      <p id="capsuleModalBody" class="text-sm sm:text-base text-gray-200 leading-relaxed italic"></p>
+      <div class="pt-2 flex items-center justify-center gap-3">
+        <button id="capsuleAnotherBtn" type="button" class="glass-card px-4 py-2.5 rounded-xl font-mono-tech text-xs text-amber-200">
+          Another Capsule ↻
+        </button>
+        <button id="capsuleModalCloseBtn" type="button" class="btn-gradient px-6 py-2.5 rounded-xl font-mono-tech text-xs uppercase">
+          Keep in Heart ♥
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- PHOTOREALISTIC ARCHITECTURAL PBR 3D ENGINE + APPLICATION LOGIC        -->
+  <!-- ===================================================================== -->
+  
+  
+  <script defer src="./app.js?v=restored-3d-1"></script>
 </body>
 </html>

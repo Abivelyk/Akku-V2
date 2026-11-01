@@ -1,24 +1,30 @@
-# AKKÚ
+# AKKÚ · The Private 3D Gallery
 
-A small, scroll-driven memory story made for one person. This version uses a quiet observatory setting, warm bronze photo frames, restrained motion, and the original photographs, films, letter, and soundtrack.
+A personal memory museum built around a warm, marble rotunda. The gallery combines a real-time Three.js scene with a set of interactive rooms and the original photos, films, letter, and soundtrack.
 
-## Project files
+## Rooms and features
 
-- `index.html` — page structure, metadata, and story content
-- `styles.css` — observatory theme, layout, and responsive styles
-- `app.js` — Three.js gallery, video reel, soundtrack, lightbox, and live counter
-- `assets/` — photographs, video clips, soundtrack, preview image, and generated backdrop
+- Seven rooms: Home, Memories, Cinema, Letter, Museum, Sparks, and Forever
+- Twenty-six walnut-and-brass framed photos arranged around the rotunda
+- Four gallery layouts, drag-to-look controls, scroll-to-walk zoom, and an optional guided tour
+- A film room with eight clips, plus a soundtrack control
+- A wax-sealed letter, five open-when notes, curator plaques, and memory games
+- Optional photo, video, and music uploads that stay in the current browser session
 
-There is no build step. Serve the project folder over HTTP or publish its contents with the `assets/` directory at the same path.
+## Files
 
-## Story start date
+- `index.html` — room markup, navigation, and page metadata
+- `styles.css` — museum styling and responsive layouts
+- `app.js` — Three.js architecture, controls, rooms, and interactions
+- `assets/` — photographs, films, soundtrack, and video posters
+- `og-cover.jpg` — social sharing preview image
 
-Edit `STORY_START` in `app.js` to change the date used by the counter. The month value is zero-based (`5` means June).
+There is no build step. Serve the project folder over HTTP, with `assets/` alongside `index.html`, or publish the folder contents to GitHub Pages.
 
-## Share preview image
+## Performance notes
 
-`og-cover.jpg` is the 1200 × 630 image used by the social sharing metadata.
+Artwork textures load in small batches instead of opening 26 image requests at once. Smaller screens use a lower WebGL pixel ratio, skip the mirrored frame copies, and use fewer concurrent image loads. Animation pauses while the page is hidden.
 
 ## Live version
 
-The currently published page is [abivelyk.github.io/Akku-V2](https://abivelyk.github.io/Akku-V2/). It is separate from this local project copy.
+[abivelyk.github.io/Akku-V2](https://abivelyk.github.io/Akku-V2/)
