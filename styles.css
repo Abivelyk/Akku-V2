@@ -149,3 +149,37 @@ button:focus-visible, a:focus-visible { outline: 2px solid #e2c299; outline-offs
   html,body { scroll-behavior: auto; }
   *,*::before,*::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
+
+/* Fine-lined observatory telemetry: SVG and gradients add detail without image requests. */
+.scene-telemetry { position: fixed; inset: 0; z-index: 4; overflow: hidden; pointer-events: none; user-select: none; color: rgba(231,210,177,.78); }
+.scene-chart { position: absolute; top: -13vh; right: -4vw; width: min(68vw, 960px); height: auto; overflow: visible; opacity: .62; mix-blend-mode: screen; filter: drop-shadow(0 0 10px rgba(207,166,116,.18)); }
+.chart-orbit { fill: none; stroke: url(#orbitInk); stroke-width: 1.1; stroke-dasharray: 3 10; transform-box: fill-box; transform-origin: center; animation: chart-orbit-drift 110s linear infinite; }
+.chart-orbit--tilt { stroke-dasharray: 1 14; animation-duration: 145s; animation-direction: reverse; }
+.chart-orbit--fine { stroke: rgba(198,162,120,.32); stroke-width: .7; stroke-dasharray: 54 8 2 8; animation-duration: 180s; }
+.chart-route { fill: none; stroke: rgba(221,195,155,.58); stroke-width: 1.1; stroke-dasharray: 2 7; animation: route-trace 18s linear infinite; }
+.chart-route--second { stroke: rgba(163,195,215,.36); stroke-dasharray: 1 10; animation-direction: reverse; animation-duration: 24s; }
+.chart-stars circle { fill: url(#starCore); stroke: rgba(241,220,185,.68); stroke-width: 1; transform-box: fill-box; transform-origin: center; animation: star-flicker 4.5s ease-in-out infinite; }
+.chart-stars circle:nth-child(3n) { animation-delay: -1.4s; }
+.chart-stars circle:nth-child(3n + 1) { animation-delay: -2.7s; }
+.chart-crosshair { fill: none; stroke: rgba(223,201,169,.38); stroke-width: 1; }
+.telemetry-label { position: absolute; display: flex; align-items: center; gap: 10px; color: rgba(236,222,198,.7); font: 9px 'JetBrains Mono',monospace; letter-spacing: .2em; text-shadow: 0 1px 14px rgba(0,0,0,.8); }
+.telemetry-label b { color: #f1d4a4; font-weight: 400; }
+.telemetry-label--top { top: 19vh; right: clamp(36px,8vw,130px); }
+.telemetry-label--side { top: 50%; right: 3.4vw; writing-mode: vertical-rl; transform: translateY(-50%); }
+.telemetry-label--side span { color: #b9d7ee; font-size: 8px; }
+.telemetry-label--bottom { right: clamp(34px,7vw,110px); bottom: 7vh; font-size: 8px; }
+.telemetry-label--bottom i { color: #d9ae79; font-style: normal; }
+.telemetry-pip { width: 5px; height: 5px; border-radius: 50%; background: #ead1a4; box-shadow: 0 0 12px 3px rgba(230,194,138,.54); animation: star-flicker 2.8s ease-in-out infinite; }
+@keyframes chart-orbit-drift { to { rotate: 360deg; } }
+@keyframes route-trace { to { stroke-dashoffset: -90; } }
+@keyframes star-flicker { 0%,100% { opacity: .45; scale: .8; } 50% { opacity: 1; scale: 1.12; } }
+@media (max-width:760px) {
+  .scene-chart { top: 3vh; right: -49vw; width: 124vw; opacity: .46; }
+  .telemetry-label { font-size: 7px; letter-spacing: .13em; }
+  .telemetry-label--top { top: 15vh; right: 22px; }
+  .telemetry-label--side { display: none; }
+  .telemetry-label--bottom { right: 22px; bottom: 3vh; font-size: 7px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .chart-orbit, .chart-route, .chart-stars circle, .telemetry-pip { animation: none; }
+}

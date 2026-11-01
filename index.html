@@ -23,7 +23,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="./styles.css?v=entry-screen-3" />
+  <link rel="stylesheet" href="./styles.css?v=archive-4" />
 </head>
 <body class="selection:bg-pink-400/30 selection:text-pink-100 is-entry-open">
   <img id="observatoryBackdrop" src="./assets/observatory-backdrop.jpg" alt="" aria-hidden="true" fetchpriority="high" />
@@ -33,6 +33,40 @@
   <!-- ===================================================================== -->
   <canvas id="webglCanvas"></canvas>
   <canvas id="burstCanvas"></canvas>
+
+  <!-- Lightweight vector star chart over the 3D gallery. -->
+  <div id="sceneTelemetry" class="scene-telemetry" aria-hidden="true">
+    <svg class="scene-chart" viewBox="0 0 900 900" focusable="false">
+      <defs>
+        <linearGradient id="orbitInk" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#f1d2a0" stop-opacity=".08" />
+          <stop offset=".48" stop-color="#f1d2a0" stop-opacity=".72" />
+          <stop offset="1" stop-color="#b9d7ee" stop-opacity=".24" />
+        </linearGradient>
+        <radialGradient id="starCore">
+          <stop stop-color="#fff8e8" />
+          <stop offset="1" stop-color="#e8bd83" stop-opacity="0" />
+        </radialGradient>
+      </defs>
+      <ellipse class="chart-orbit chart-orbit--wide" cx="450" cy="450" rx="390" ry="168" />
+      <ellipse class="chart-orbit chart-orbit--tilt" cx="450" cy="450" rx="315" ry="235" transform="rotate(-34 450 450)" />
+      <ellipse class="chart-orbit chart-orbit--fine" cx="450" cy="450" rx="250" ry="112" transform="rotate(24 450 450)" />
+      <path class="chart-route" d="M112 279 246 328 337 210 472 283 568 177 713 245 786 362" />
+      <path class="chart-route chart-route--second" d="M246 328 287 514 443 578 568 477 713 545 786 362" />
+      <g class="chart-stars">
+        <circle cx="112" cy="279" r="8" /><circle cx="246" cy="328" r="6" />
+        <circle cx="337" cy="210" r="7" /><circle cx="472" cy="283" r="5" />
+        <circle cx="568" cy="177" r="9" /><circle cx="713" cy="245" r="6" />
+        <circle cx="786" cy="362" r="8" /><circle cx="287" cy="514" r="5" />
+        <circle cx="443" cy="578" r="7" /><circle cx="568" cy="477" r="5" />
+        <circle cx="713" cy="545" r="7" />
+      </g>
+      <g class="chart-crosshair"><path d="M450 396v108M396 450h108" /><circle cx="450" cy="450" r="20" /></g>
+    </svg>
+    <div class="telemetry-label telemetry-label--top"><span class="telemetry-pip"></span> ARCHIVE SIGNAL <b>01—26</b></div>
+    <div class="telemetry-label telemetry-label--side">MEMORY ORBIT <span>LIVE</span></div>
+    <div class="telemetry-label telemetry-label--bottom">AKKÚ <i>·</i> DEEP SKY COLLECTION</div>
+  </div>
 
   <!-- Continuous Background Soundtrack ("Jaavedaan Hai") -->
   <audio id="bgMusic" preload="none" loop playsinline src="./assets/audio_3.mp3"></audio>

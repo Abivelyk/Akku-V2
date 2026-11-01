@@ -121,6 +121,7 @@
         window.setTimeout(() => {
           overlay.hidden = true;
         }, prefersReducedMotion ? 0 : 740);
+        startAnimation();
         toggleMusic(true);
       });
 
@@ -213,16 +214,16 @@
       scene.fog = new THREE.Fog(0x03060c, 105, 245);
 
       const camera = new THREE.PerspectiveCamera(52, window.innerWidth / window.innerHeight, 0.1, 260);
+      const isSmallScreen = window.matchMedia('(max-width: 760px)').matches;
       const renderer = new THREE.WebGLRenderer({
         canvas,
         alpha: true,
-        antialias: true,
-        powerPreference: 'high-performance'
+        antialias: !isSmallScreen,
+        powerPreference: isSmallScreen ? 'low-power' : 'high-performance'
       });
       renderer.setClearColor(0x000000, 0);
       renderer.setSize(window.innerWidth, window.innerHeight);
-      const isSmallScreen = window.matchMedia('(max-width: 760px)').matches;
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isSmallScreen ? 1.25 : 1.75));
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isSmallScreen ? 1.1 : 1.4));
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
       renderer.toneMappingExposure = 1.0;
 
@@ -236,6 +237,53 @@
       const coolWindowLight = new THREE.PointLight(0x7a9dc0, 1.2, 55, 2);
       coolWindowLight.position.set(7, 5, -72);
       scene.add(coolWindowLight);
+
+      // A sparse deterministic star field and three thin orbital gates add depth at low GPU cost.
+      let starSeed = 0xacc0b1;
+      const randomStar = () => {
+        starSeed = (starSeed * 1664525 + 1013904223) >>> 0;
+        return starSeed / 4294967296;
+      };
+      const starCount = isSmallScreen ? 280 : 560;
+      const starPositions = new Float32Array(starCount * 3);
+      const starColors = new Float32Array(starCount * 3);
+      const starPalette = [new THREE.Color(0xe9d3ad), new THREE.Color(0xa9c9e2), new THREE.Color(0xd9a8b6)];
+      for (let i = 0; i < starCount; i++) {
+        const offset = i * 3;
+        starPositions[offset] = (randomStar() - 0.5) * 25;
+        starPositions[offset + 1] = (randomStar() - 0.5) * 15;
+        starPositions[offset + 2] = 11 - randomStar() * 212;
+        const tint = starPalette[Math.floor(randomStar() * starPalette.length)];
+        starColors[offset] = tint.r;
+        starColors[offset + 1] = tint.g;
+        starColors[offset + 2] = tint.b;
+      }
+      const starGeometry = new THREE.BufferGeometry();
+      starGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+      starGeometry.setAttribute('color', new THREE.BufferAttribute(starColors, 3));
+      const starField = new THREE.Points(starGeometry, new THREE.PointsMaterial({
+        size: isSmallScreen ? 0.055 : 0.06,
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.6,
+        sizeAttenuation: true,
+        depthWrite: false
+      }));
+      scene.add(starField);
+
+      const portalGeometry = new THREE.TorusGeometry(4.45, 0.012, 4, 88);
+      const portalMaterials = [
+        new THREE.MeshBasicMaterial({ color: 0xe2bd88, transparent: true, opacity: 0.34, depthWrite: false }),
+        new THREE.MeshBasicMaterial({ color: 0xa8cde6, transparent: true, opacity: 0.2, depthWrite: false, side: THREE.BackSide })
+      ];
+      const orbitPortals = [-28, -91, -154].map((z, index) => {
+        const portal = new THREE.Group();
+        portal.position.set(Math.sin(index * 2.2) * 0.38, 0.14, z);
+        portal.rotation.set(0.08 + index * 0.04, (index - 1) * 0.12, 0);
+        portal.add(new THREE.Mesh(portalGeometry, portalMaterials[index % portalMaterials.length]));
+        scene.add(portal);
+        return { group: portal, index };
+      });
 
       // Frames use the actual photographs in assets/ and load only as the camera approaches.
       const textureLoader = new THREE.TextureLoader();
@@ -491,7 +539,7 @@
       const chapLinks = document.querySelectorAll('.chap-link');
 
       function resizeAll() {
-        const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+        const pixelRatio = Math.min(window.devicePixelRatio || 1, 1.5);
         burstCanvas.width = Math.floor(window.innerWidth * pixelRatio);
         burstCanvas.height = Math.floor(window.innerHeight * pixelRatio);
         burstCanvas.style.width = window.innerWidth + 'px';
@@ -499,7 +547,7 @@
         burstCanvas.getContext('2d').setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, window.innerWidth <= 760 ? 1.25 : 1.75));
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, window.innerWidth <= 760 ? 1.1 : 1.4));
         renderer.setSize(window.innerWidth, window.innerHeight);
       }
       window.addEventListener('resize', resizeAll);
@@ -512,6 +560,11 @@
         const dt = Math.min((now - lastTime) / 1000, 0.05);
         lastTime = now;
         const elapsed = now * 0.001;
+
+        starField.rotation.y = Math.sin(elapsed * 0.025) * 0.012;
+        orbitPortals.forEach(({ group, index }) => {
+          group.rotation.z = Math.sin(elapsed * 0.12 + index * 1.8) * 0.08;
+        });
 
         // Smooth Lenis-style inertial scroll damping
         const scrollEase = prefersReducedMotion ? 1 : 1 - Math.exp(-8.5 * dt);
@@ -606,7 +659,7 @@
       }
 
       function startAnimation() {
-        if (document.hidden || animationFrame !== null) return;
+        if (document.hidden || document.body.classList.contains('is-entry-open') || animationFrame !== null) return;
         lastTime = performance.now();
         animationFrame = requestAnimationFrame(animate);
       }
@@ -621,5 +674,4 @@
         startAnimation();
       });
 
-      startAnimation();
     })();
