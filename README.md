@@ -1,13 +1,22 @@
-# AKKÚ · THE PRIVATE 3D ARCHITECTURAL GALLERY (Photorealistic PBR Edition)
+# AKKÚ · A 3D Scroll Story
 
-A photorealistic 3D architectural museum & gallery built for Akku using Three.js Physically Based Rendering (PBR), featuring:
-- **Polished Nero Marquina Veined Black Marble Floor** with real-time planar mirror reflections at up to 144 FPS
-- **16 Fluted Travertine Stone Columns**, brushed champagne-bronze capitals, and a coffered glass skylight rotunda
-- **26 Physical Walnut & Brushed-Brass Museum Picture Frames** with warm ivory passe-partout matting, engraved brass plaques, and overhead 3000K gallery halogen spotlights
-- **All 26 Original Photographs (`p01.jpg`–`p26.jpg`)** (with `p09.jpg` auto-corrected upright) embedded & included in `assets/`
-- **All 8 Original Motion Clips (`v02.mp4`, `v03.mp4`, `clip01.mp4`–`clip08.mp4`)** + extracted **"Jaavedaan Hai"** continuous soundtrack (`audio_3.mp3`)
+A small universe, made for one person. A scroll-driven 3D story built with Three.js:
 
-## How to Upload to GitHub (`abivelyk/Akku`)
-1. Extract this zip folder.
-2. Upload `index.html` and the `assets/` folder to the root of your `abivelyk/Akku` GitHub repository.
-3. Commit your changes — GitHub Pages will publish your updated 3D gallery live at `https://abivelyk.github.io/Akku/`.
+- **26 photographs** (`assets/p01.jpg` – `p26.jpg`) floating as glass frames; tap any to view up close
+- **8 short films** in a private screening room (`v02`, `v03`, `clip02`, `clip03`, `clip04`, `clip06`, `clip07`, `clip08`)
+- **"Jaavedaan Hai"** as the background soundtrack (`assets/audio_3.mp3`), auto-pausing while a clip plays
+- **A letter** with four "open when…" envelopes
+- **A live counter** that counts up from **24 June 2026**
+
+Live site: https://abivelyk.github.io/Akku-V2/
+
+## Changing the start date
+In `index.html`, find `STORY_START` and edit the `new Date(year, month, day)` line
+(months are 0-based: January = 0, June = 5).
+
+## Link preview
+`assets/og-cover.jpg` (1200×630) is the card shown when the link is shared on WhatsApp, Instagram, etc.
+
+## Deploying
+Upload `index.html` and the `assets/` folder to the root of the `abivelyk/Akku-V2` repository.
+GitHub Pages will publish it at the URL above.

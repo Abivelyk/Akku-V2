@@ -4,6 +4,20 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
   <title>AKKÚ · A 3D Scroll Story</title>
+  <meta name="description" content="A small universe, made for one person. Twenty-six memories, eight little films and one letter, in 3D." />
+  <meta name="theme-color" content="#050408" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%99%A5%3C/text%3E%3C/svg%3E" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="AKKÚ · A 3D Scroll Story" />
+  <meta property="og:description" content="A small universe, made for one person. Put on headphones and scroll." />
+  <meta property="og:url" content="https://abivelyk.github.io/Akku-V2/" />
+  <meta property="og:image" content="https://abivelyk.github.io/Akku-V2/assets/og-cover.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="AKKÚ · A 3D Scroll Story" />
+  <meta name="twitter:description" content="A small universe, made for one person." />
+  <meta name="twitter:image" content="https://abivelyk.github.io/Akku-V2/assets/og-cover.jpg" />
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -103,11 +117,11 @@
   <canvas id="burstCanvas"></canvas>
 
   <!-- Continuous Background Soundtrack ("Jaavedaan Hai") -->
-  <audio id="bgMusic" preload="auto" loop playsinline src="https://abivelyk.github.io/Akku/assets/audio_3.mp3"></audio>
+  <audio id="bgMusic" preload="auto" loop playsinline src="https://abivelyk.github.io/Akku-V2/assets/audio_3.mp3"></audio>
 
   <!-- Hidden Video Sources for Live 3D WebGL Cinema Screens -->
-  <video id="texVideo1" loop muted playsinline crossorigin="anonymous" class="hidden" src="https://abivelyk.github.io/Akku/assets/v02.mp4"></video>
-  <video id="texVideo2" loop muted playsinline crossorigin="anonymous" class="hidden" src="https://abivelyk.github.io/Akku/assets/v03.mp4"></video>
+  <video id="texVideo1" loop muted playsinline crossorigin="anonymous" class="hidden" src="https://abivelyk.github.io/Akku-V2/assets/v02.mp4"></video>
+  <video id="texVideo2" loop muted playsinline crossorigin="anonymous" class="hidden" src="https://abivelyk.github.io/Akku-V2/assets/v03.mp4"></video>
 
   <!-- ===================================================================== -->
   <!-- MINIMAL CINEMATIC ENTRY CURTAIN                                       -->
@@ -268,8 +282,8 @@
               controls
               playsinline
               preload="metadata"
-              poster="https://abivelyk.github.io/Akku/assets/v02.webp"
-              src="https://abivelyk.github.io/Akku/assets/v02.mp4"
+              poster="https://abivelyk.github.io/Akku-V2/assets/v02.webp"
+              src="https://abivelyk.github.io/Akku-V2/assets/v02.mp4"
               class="w-full h-full object-contain"
             ></video>
           </div>
@@ -358,13 +372,14 @@
           </div>
           <div class="p-4 rounded-2xl bg-white/[0.04] border border-white/10">
             <div id="statHours" class="font-serif-display text-2xl sm:text-4xl text-white">0</div>
-            <div class="font-mono-tech text-[9px] uppercase tracking-widest text-pink-200/70 mt-1">Hours Shared</div>
+            <div class="font-mono-tech text-[9px] uppercase tracking-widest text-pink-200/70 mt-1">Hours Passed</div>
           </div>
           <div class="p-4 rounded-2xl bg-white/[0.04] border border-white/10">
             <div id="statBeats" class="font-serif-display text-2xl sm:text-4xl text-pink-300">0</div>
             <div class="font-mono-tech text-[9px] uppercase tracking-widest text-pink-300/90 mt-1">Heartbeats ♥</div>
           </div>
         </div>
+        <div id="statSince" class="font-mono-tech text-[10px] uppercase tracking-[0.3em] text-pink-200/60 pt-1">Since 24 June 2026</div>
 
         <div class="flex flex-wrap items-center justify-center gap-3 pt-3">
           <button id="sendHeartsBtn" type="button" class="px-7 py-3.5 rounded-full bg-gradient-to-r from-pink-300 via-rose-200 to-amber-100 text-zinc-950 font-medium text-xs font-mono-tech uppercase tracking-wider shadow-xl hover:brightness-105 active:scale-95 transition">
@@ -393,7 +408,7 @@
       </div>
 
       <div class="relative h-[58vh] sm:h-[64vh] w-full rounded-2xl overflow-hidden bg-black/60 flex items-center justify-center">
-        <img id="modalPhotoImg" src="https://abivelyk.github.io/Akku/assets/p01.jpg" alt="Memory Fullscreen" class="max-w-full max-h-full object-contain" />
+        <img id="modalPhotoImg" src="https://abivelyk.github.io/Akku-V2/assets/p01.jpg" alt="Memory Fullscreen" class="max-w-full max-h-full object-contain" />
       </div>
 
       <div class="flex items-center justify-between gap-4 pt-1">
@@ -415,7 +430,7 @@
   <script>
     (function () {
       const INLINE_MAP = window.__INLINE_ASSETS__ || {};
-      const REMOTE_BASE = 'https://abivelyk.github.io/Akku/assets/';
+      const REMOTE_BASE = 'https://abivelyk.github.io/Akku-V2/assets/';
       const LOCAL_BASE = 'assets/';
       const isLocalOrGH =
         window.location.protocol === 'file:' ||
@@ -580,15 +595,28 @@
       });
 
       // Live Time & Heartbeat Counter in Chapter 05
+      // Single source of truth: the day everything started (local time, 24 June 2026).
+      const STORY_START = new Date(2026, 5, 24, 0, 0, 0); // month is 0-based → 5 = June
+      const statDaysEl = document.getElementById('statDays');
+      const statHoursEl = document.getElementById('statHours');
+      const statBeatsEl = document.getElementById('statBeats');
+      const statSinceEl = document.getElementById('statSince');
+      if (statSinceEl) {
+        statSinceEl.textContent = 'Since ' + STORY_START.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+      }
       function updateCounters() {
-        const start = new Date('2024-01-01T00:00:00').getTime();
-        const diff = Math.max(0, Date.now() - start);
-        document.getElementById('statDays').textContent = Math.floor(diff / 86400000).toLocaleString();
-        document.getElementById('statHours').textContent = Math.floor(diff / 3600000).toLocaleString();
-        document.getElementById('statBeats').textContent = Math.floor((diff / 1000) * 1.2).toLocaleString();
+        const diff = Math.max(0, Date.now() - STORY_START.getTime());
+        statDaysEl.textContent = Math.floor(diff / 86400000).toLocaleString();
+        statHoursEl.textContent = Math.floor(diff / 3600000).toLocaleString();
+        statBeatsEl.textContent = Math.floor((diff / 1000) * 1.2).toLocaleString();
       }
       updateCounters();
-      setInterval(updateCounters, 1000);
+      let counterTimer = setInterval(updateCounters, 1000);
+      // Save battery/CPU: pause ticking while the tab is hidden, resync on return.
+      document.addEventListener('visibilitychange', () => {
+        clearInterval(counterTimer);
+        if (!document.hidden) { updateCounters(); counterTimer = setInterval(updateCounters, 1000); }
+      });
 
       // ===================================================================
       // 2. AWWWARDS-GRADE SCROLL-DRIVEN 3D WEBGL SCENE (Three.js r128)
