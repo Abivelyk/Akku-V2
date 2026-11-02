@@ -27,3 +27,4 @@ or `?q=low` to the URL.
 ## Deploying
 Upload `index.html` and the `assets/` folder to the root of the `abivelyk/Akku-V2` repository.
 GitHub Pages will publish it at the URL above.
+Claude support MAX LIMIT.
