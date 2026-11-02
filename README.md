@@ -17,6 +17,13 @@ In `index.html`, find `STORY_START` and edit the `new Date(year, month, day)` li
 ## Link preview
 `assets/og-cover.jpg` (1200×630) is the card shown when the link is shared on WhatsApp, Instagram, etc.
 
+## Graphics
+Physically based rendering on Three.js r128: bevelled rose-gold frames with glass sheen, a real mirror reflection on
+veined black-marble slabs, a procedural sky (stars, Milky Way, moon), GPU fireflies with depth-of-field bokeh, light
+shafts, and an HDR post chain (bloom, filmic tone-mapping, vignette, grain).
+Quality adapts automatically (high → med → low) if a device can't hold ~30 fps. To force a tier, add `?q=high`, `?q=med`
+or `?q=low` to the URL.
+
 ## Deploying
 Upload `index.html` and the `assets/` folder to the root of the `abivelyk/Akku-V2` repository.
 GitHub Pages will publish it at the URL above.
